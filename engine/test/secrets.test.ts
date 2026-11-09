@@ -53,7 +53,7 @@ test("02: Schlüssel nur maskiert", () => {
 test("01 und 03: keine Geheimnis-Funde, Bereich grün", () => {
   for (const p of ["01-sauber", "03-zugriff-fehlt"]) {
     const r = runCheck(join(fx, p));
-    assert.deepEqual(r.findings, [], p);
+    assert.deepEqual(r.findings.filter((f) => f.area === "geheimnisse"), [], p);
     assert.equal(r.areas.find((a) => a.id === "geheimnisse")!.ampel, "gruen", p);
     assert.equal(r.acute, false, p);
   }
@@ -86,12 +86,13 @@ test("--intern zeigt Datei und Zeile, Standard nicht", () => {
 
 test(".env, das per .gitignore ausgeschlossen ist, ist kein Fund", () => {
   const d = project("env-ignored", { ".gitignore": ".env\nnode_modules\n", ".env": "API_URL=https://x.example\nTOKEN=abc123\n" });
-  assert.deepEqual(runCheck(d).findings, []);
+  assert.deepEqual(runCheck(d).findings.filter((f) => f.area === "geheimnisse"), []);
 });
 
 test(".env mit echtem Wert ohne .gitignore ist ein Fund (nicht akut)", () => {
   const d = project("env-open", { ".env": "TOKEN=abc123\n" });
   const r = runCheck(d);
+  r.findings = r.findings.filter((f) => f.area === "geheimnisse");
   assert.equal(r.findings.length, 1);
   assert.equal(r.findings[0].acute, false);
   assert.equal(r.acute, false);
@@ -104,17 +105,18 @@ test("Vorlagen und leere/Platzhalter-Werte sind keine Funde", () => {
     ".env": "OPENAI_API_KEY=\nEMPTY=\n# comment\n",
     "src/db.ts": 'const url = "postgresql://user:password@localhost:5432/app";\n',
   });
-  assert.deepEqual(runCheck(d).findings, []);
+  assert.deepEqual(runCheck(d).findings.filter((f) => f.area === "geheimnisse"), []);
 });
 
 test("Keine Funde in node_modules", () => {
   const d = project("vendor", { "node_modules/x/index.js": `const k = "${FAKE_KEY}";\n` });
-  assert.deepEqual(runCheck(d).findings, []);
+  assert.deepEqual(runCheck(d).findings.filter((f) => f.area === "geheimnisse"), []);
 });
 
 test("Private Schlüssel werden erkannt, Hinweis ohne Inhalt", () => {
   const d = project("pem", { "keys/server.pem": "-----BEGIN RSA PRIVATE KEY-----\nMIIB\n-----END RSA PRIVATE KEY-----\n" });
   const r = runCheck(d);
+  r.findings = r.findings.filter((f) => f.area === "geheimnisse");
   assert.equal(r.findings.length, 1);
   assert.equal(r.findings[0].hinweis, "private key");
   assert.equal(r.acute, true);
@@ -123,7 +125,7 @@ test("Private Schlüssel werden erkannt, Hinweis ohne Inhalt", () => {
 test("Binärdateien werden übersprungen", () => {
   const d = project("bin", {});
   writeFileSync(join(d, "logo.png"), Buffer.concat([Buffer.from([0, 1, 2, 3]), Buffer.from(FAKE_KEY)]));
-  assert.deepEqual(runCheck(d).findings, []);
+  assert.deepEqual(runCheck(d).findings.filter((f) => f.area === "geheimnisse"), []);
 });
 
 test("CLI: nicht vorhandener Pfad ist ein Fehler (Exit 2)", () => {

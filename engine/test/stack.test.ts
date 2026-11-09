@@ -77,10 +77,10 @@ test("kaputte package.json wird nicht als Node-Projekt gewertet", () => {
   assert.equal(runCheck(d).stack.status, "nicht_unterstuetzt");
 });
 
-test("Bereiche ohne Modul bleiben 'offen', nur Geheimnisse ist geprüft", () => {
+test("Bereiche ohne Modul bleiben 'offen', nur Geheimnisse und Zugang sind geprüft", () => {
   const r = runCheck(join(fx, "01-sauber"));
   assert.equal(r.areas.length, 5);
-  for (const a of r.areas) assert.equal(a.ampel, a.id === "geheimnisse" ? "gruen" : "offen");
+  for (const a of r.areas) assert.equal(a.ampel, a.id === "geheimnisse" || a.id === "zugang_rechte" ? "gruen" : "offen");
 });
 
 test("Nicht unterstützter Stack: kein Bereich wird als geprüft ausgewiesen", () => {

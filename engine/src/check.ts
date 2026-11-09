@@ -1,8 +1,9 @@
 import { detectStack } from "./stack.ts";
 import { scanSecrets } from "./scanners/secrets.ts";
+import { scanAccess } from "./scanners/access.ts";
 import type { AreaResult, CheckResult, Finding, ResultCode } from "./types.ts";
 
-export const ENGINE_VERSION = "0.2.0";
+export const ENGINE_VERSION = "0.3.0";
 
 /** Findings below this confidence are dropped (hard rule 3). */
 export const MIN_CONFIDENCE = 0.8;
@@ -33,6 +34,12 @@ export function runCheck(dir: string): CheckResult {
   if (stack.status === "unterstuetzt") {
     findings = scanSecrets(dir).filter((f) => f.konfidenz >= MIN_CONFIDENCE);
     setAmpel("geheimnisse", findings.some((f) => f.area === "geheimnisse") ? "rot" : "gruen");
+
+    const access = scanAccess(dir, stack.features.supabase);
+    const accessFindings = access.findings.filter((f) => f.konfidenz >= MIN_CONFIDENCE);
+    findings = findings.concat(accessFindings);
+    // Nothing to look at (no routes, no migrations) must not look green.
+    if (access.examined) setAmpel("zugang_rechte", accessFindings.some((f) => f.severity === "hoch") ? "rot" : accessFindings.length ? "gelb" : "gruen");
   }
 
   return {

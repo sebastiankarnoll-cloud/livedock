@@ -36,7 +36,8 @@ Next.js, Postgres, Claude Agent SDK, GitHub-App (nur lesen), Hetzner/Coolify-API
 ## Aktueller Schritt
 Schritt 1: Check-Engine als CLI, ohne Portal und Datenbank. Erfolg: Auf allen Testprojekten stimmen die Funde, keine Fehlalarme.
 
-Stand: Stack-Erkennung und Bereich 1 (Geheimnisse) stehen (`engine/`, `npm test`, 23 Tests grün). Bereiche 2 bis 5 stehen noch auf „offen“.
+Stand: Stack-Erkennung, Bereich 1 (Geheimnisse) und Bereich 2 (Zugang und Rechte) stehen (`engine/`, `npm test`, 40 Tests grün). Bereiche 3 bis 5 stehen noch auf „offen“.
+Bereich 2 nutzt eigene, vorsichtige Regeln (`scanners/access.ts`): Schnittstelle ohne Login-Prüfung, Tabelle ohne Zugriffsregeln (RLS, nur Supabase), Service-Key in offener Schnittstelle oder als NEXT_PUBLIC-Variable. Findet er nichts Prüfbares (keine Routen, keine Migrationen), bleibt der Bereich „offen“, nie grün. Nicht abgedeckt: Login nur im Browser, Rollen/Mandanten innerhalb eines Logins.
 Bereich 1 nutzt einen eingebauten Detektor (nur sichere Muster: Anbieter-Schlüssel, Passwörter in Datenbank-URLs, private Schlüssel, eingecheckte `.env`). gitleaks ließ sich in der Cloud-Umgebung nicht installieren (Netzwerk gesperrt); ein Adapter kann später hinter `scanSecrets()` eingehängt werden.
 Kundensicht ist Standard (keine Datei/Zeile), `--intern` zeigt Belege nur für Sebastian.
 Nächste Module: semgrep (2, 5), osv-scanner (5), Claude-Auswertung (2, 3, 4).
