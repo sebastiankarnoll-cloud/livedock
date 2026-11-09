@@ -16,5 +16,7 @@ key="${p1}${p2}${p3}"
 rm -rf "$out"
 mkdir -p "$out"
 cp -R "$src"/0* "$out"/
+# 07-leer is an empty folder; git cannot store empty folders, so it is created here.
+mkdir -p "$out/07-leer"
 grep -rl '@@OPENAI_TEST_KEY@@' "$out" | xargs -r sed -i "s|@@OPENAI_TEST_KEY@@|${key}|g"
 echo "ok: test projects in $out"

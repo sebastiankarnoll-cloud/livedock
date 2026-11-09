@@ -36,7 +36,7 @@ Next.js, Postgres, Claude Agent SDK, GitHub-App (nur lesen), Hetzner/Coolify-API
 ## Aktueller Schritt
 Schritt 1: Check-Engine als CLI, ohne Portal und Datenbank. Erfolg: Auf allen Testprojekten stimmen die Funde, keine Fehlalarme.
 
-Stand: Stack-Erkennung, Bereiche 1 bis 5 und die Ergebnis-Regel stehen (`engine/`, `npm test`, 71 Tests grün, plus `npm run test:live` (3 Tests mit Netz), Engine 0.5.0). Auf den Testprojekten 01 bis 03 stimmen alle Funde und das Gesamtergebnis (1, 4 mit Basis 2, 2), keine Fehlalarme.
+Stand: Stack-Erkennung, Bereiche 1 bis 5 und die Ergebnis-Regel stehen (`engine/`, `npm test`, 75 Tests grün, plus `npm run test:live` (3 Tests mit Netz), Engine 0.5.0). Auf den Testprojekten 01 bis 03 stimmen alle Funde und das Gesamtergebnis (1, 4 mit Basis 2, 2), keine Fehlalarme.
 Alle Bereiche nutzen eigene, vorsichtige Regeln (nur sichere Funde, Konfidenz mindestens 0,8):
 - Bereich 2 (`access.ts`): Schnittstelle ohne Login-Prüfung, Tabelle ohne Zugriffsregeln (RLS, nur Supabase), Service-Key in offener Schnittstelle oder als NEXT_PUBLIC-Variable. Nichts Prüfbares gefunden = „offen“, nie grün. Nicht abgedeckt: Login nur im Browser, Rollen/Mandanten innerhalb eines Logins.
 - Bereich 3 (`data.ts`): Personenfelder (E-Mail, Telefon, Adresse, IBAN, Geburtsdatum, Vor-/Nachname) an KI-Dienst außerhalb der EU, E-Mail/Passwort im Log, Tracking ohne erkennbare Einwilligung. Nicht abgedeckt: Löschkonzept, Auftragsverarbeitung, Datenflüsse über Dritt-Bibliotheken.
@@ -45,7 +45,7 @@ Alle Bereiche nutzen eigene, vorsichtige Regeln (nur sichere Funde, Konfidenz mi
 Ergebnis-Regel (`check.ts`): akuter Fund = 4 (mit `basis` darunter), sonst Funde = 2, keine Funde und Bereiche 1 bis 4 grün = 1, sonst kein Urteil (`null`). **„3 Umbau nötig“ setzt die Engine nie selbst**, ab 6 schweren Funden gibt sie nur `reviewHint` für Sebastian aus. Zusätzlich liefert sie `positives` (nur, was die Scans bestätigt haben).
 Bereich 1 nutzt einen eingebauten Detektor (nur sichere Muster: Anbieter-Schlüssel, Passwörter in Datenbank-URLs, private Schlüssel, eingecheckte `.env`). gitleaks ließ sich in der Cloud-Umgebung nicht installieren (Netzwerk gesperrt); ein Adapter kann später hinter `scanSecrets()` eingehängt werden.
 Kundensicht ist Standard (keine Datei/Zeile), `--intern` zeigt Belege nur für Sebastian.
-Nächste Module: gitleaks-Vergleich (1, auf Sebastians Rechner/Server), Claude-Auswertung (2, 3, 4) für Fälle, die Regeln nicht sicher entscheiden, weitere Testprojekte 04 bis 07.
+Nächste Module: gitleaks-Vergleich (1, auf Sebastians Rechner/Server), Claude-Auswertung (2, 3, 4) für Fälle, die Regeln nicht sicher entscheiden.
 Testprojekte vor jedem Lauf mit `bash testprojekte/materialize.sh /tmp/livedock-fixtures` erzeugen.
 
 ## Offen: in der Cloud-Umgebung nicht prüfbar (nicht vergessen)

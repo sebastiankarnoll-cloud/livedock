@@ -7,10 +7,10 @@ Zweck: Die Engine muss auf bekannten Fällen genau die erwarteten Funde liefern,
 | 01 | `sauber` | Next.js, Supabase mit Zugriffsregeln, Login, EU-KI, keine Schlüssel, aktuelle Bausteine | 🟢 Gut aufgestellt (kein Fund, Positives; Betrieb/Unterlagen fehlen) |
 | 02 | `schluessel-offen` | Echter-aussehender Test-Schlüssel im Code und `.env` im Repo, sonst ok | 🚨 Akuter Fund (maskiert), Rest 🟡/🟢 |
 | 03 | `zugriff-fehlt` | Daten ohne Zugriffsregeln, Schnittstellen ohne Login-Prüfung, KI-Eingaben ungefiltert, US-KI-Dienst | 🟡 Behebbar (1 hoch, mehrere mittel) |
-| 04 | `umbau-noetig` | Kein Login, keine Rollen, Kundendaten, alles in einer Datei | 🔴 Umbau nötig |
+| 04 | `umbau-noetig` | Kein Login, keine Rollen, Kundendaten, alles in einer Datei | 🟡 Behebbar mit Umbau-Hinweis für Sebastian (die Engine setzt 3 nie selbst) |
 | 05 | `elistio` (Sebastians eigenes Projekt, nur Kopie, kein Kundencode) | realer Fall | offen, manuell bewerten |
 | 06 | `stack-fremd` | Python/Django | ⚙️ Stack nicht unterstützt |
-| 07 | `leer` | leeres Repo | ❓ Nicht prüfbar |
+| 07 | `leer` | leerer Ordner (wird von `materialize.sh` angelegt, Erwartung in `expected-07-leer.md`) | ❓ Nicht prüfbar |
 | 08 | `alte-bausteine` | Zwei veraltete Bausteine mit Lockfile, sonst leer. Prüft den Lücken-Abgleich (braucht Netz: `npm run test:live` in `engine/`) | 🟡 Behebbar, Bereich 5 rot |
 
 ## Regeln für Testprojekte
