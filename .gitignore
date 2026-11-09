@@ -5,3 +5,6 @@ node_modules/
 *.log
 .next/
 dist/
+
+# Testprojekt 02 enthaelt absichtlich eine .env (nur Faelschungen)
+!testprojekte/02-schluessel-offen/.env

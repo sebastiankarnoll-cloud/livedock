@@ -18,6 +18,13 @@ Zweck: Die Engine muss auf bekannten Fällen genau die erwarteten Funde liefern,
 - Jedes Projekt ist klein (unter 30 Dateien), damit Läufe schnell und billig bleiben.
 - Änderungen an `EXPECTED.md` nur bewusst und mit Begründung im Commit.
 
+## Vor jedem Testlauf
+Der gefälschte Schlüssel in 02 liegt nicht im Repository (GitHub Push Protection blockiert ihn). Er wird eingesetzt durch:
+
+`bash testprojekte/materialize.sh /tmp/livedock-fixtures`
+
+Die Engine läuft immer gegen den Ausgabeordner, nie gegen `testprojekte/` selbst.
+
 ## Messgrößen
 - **Trefferquote:** erwartete Funde, die gefunden werden
 - **Fehlalarme:** Funde, die nicht erwartet waren. Ziel: 0 im Ergebnis, das der Kunde sieht.
