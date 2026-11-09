@@ -41,3 +41,10 @@ Bereich 1 nutzt einen eingebauten Detektor (nur sichere Muster: Anbieter-Schlüs
 Kundensicht ist Standard (keine Datei/Zeile), `--intern` zeigt Belege nur für Sebastian.
 Nächste Module: semgrep (2, 5), osv-scanner (5), Claude-Auswertung (2, 3, 4).
 Testprojekte vor jedem Lauf mit `bash testprojekte/materialize.sh /tmp/livedock-fixtures` erzeugen.
+
+## Offen: in der Cloud-Umgebung nicht prüfbar (nicht vergessen)
+Gemessen am 09.11.2026: gitleaks nicht installierbar (GitHub und Go-Proxy gesperrt), semgrep.dev und api.osv.dev nicht erreichbar. pip und npm gehen.
+- **gitleaks** fehlt als zweite Schicht für Bereich 1. Vor dem ersten echten Check lokal oder auf dem livedock-Server gegen alle Testprojekte laufen lassen und mit dem eingebauten Detektor vergleichen.
+- **osv-scanner** (Bausteine mit bekannten Lücken, Bereich 5) ist hier gar nicht möglich. Bereich 5 darf ohne diesen Teil nie „grün“ zeigen, sondern höchstens „teilweise geprüft“. Testprojekte brauchen dafür Lockfiles.
+- **semgrep** geht per pip, aber nur mit eigenen Regeln (Registry gesperrt). Das ist ok, wir brauchen eigene Regeln ohnehin.
+- **Produktion:** Der Server, auf dem die Engine später läuft, braucht ausgehenden Zugriff auf die Vulnerability-Datenbank (osv.dev oder lokale Kopie) und die EU-KI-Schnittstelle. Das ist eine Anforderung an die Server-Einrichtung, keine Einschränkung des Produkts.
