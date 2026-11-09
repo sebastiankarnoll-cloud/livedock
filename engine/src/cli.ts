@@ -1,8 +1,9 @@
+import { existsSync, statSync } from "node:fs";
 import { resolve } from "node:path";
-import { runCheck } from "./check.ts";
+import { runCheck, publicView } from "./check.ts";
 import type { CheckResult } from "./types.ts";
 
-const USAGE = "usage: livedock check <path> [--json]";
+const USAGE = "usage: livedock check <path> [--json] [--intern]";
 
 const RESULT_TEXT: Record<string, string> = {
   stack_nicht_unterstuetzt: "Stack nicht unterstützt",
@@ -28,8 +29,17 @@ function render(r: CheckResult): string {
     lines.push(`  ⎿ eingabeprüfung-bibliothek: ${f.validation ? "ja" : "nein"}`);
   }
   if (r.result) lines.push(`● ergebnis: ${RESULT_TEXT[r.result]}`);
+  if (r.acute) lines.push("● akuter fund: echter zugang im code gefunden, sofort erneuern");
   lines.push("● prüfbereiche");
   for (const a of r.areas) lines.push(`  ⎿ ${a.label}: ${a.ampel === "offen" ? "noch nicht geprüft" : a.ampel}`);
+  if (r.findings.length) {
+    lines.push(`● funde (${r.findings.length})`);
+    for (const x of r.findings) {
+      const hint = x.hinweis ? ` [${x.hinweis}]` : "";
+      lines.push(`  ⎿ ${x.severity}: ${x.kategorie}, bereich ${x.bereich}${hint}`);
+      if (x.intern) lines.push(`      intern: ${x.intern.datei}:${x.intern.zeile} (${x.intern.regel})`);
+    }
+  }
   return lines.join("\n");
 }
 
@@ -39,8 +49,15 @@ function main(argv: string[]): number {
     console.error(USAGE);
     return 2;
   }
-  const result = runCheck(resolve(target));
-  console.log(flags.includes("--json") ? JSON.stringify(result, null, 2) : render(result));
+  const dir = resolve(target);
+  if (!existsSync(dir) || !statSync(dir).isDirectory()) {
+    console.error(`error: path not found or not a directory: ${target}`);
+    return 2;
+  }
+  const full = runCheck(dir);
+  // Default output is the customer view. Evidence only with --intern.
+  const out = flags.includes("--intern") ? full : publicView(full);
+  console.log(flags.includes("--json") ? JSON.stringify(out, null, 2) : render(out));
   return 0;
 }
 

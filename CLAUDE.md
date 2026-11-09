@@ -36,5 +36,8 @@ Next.js, Postgres, Claude Agent SDK, GitHub-App (nur lesen), Hetzner/Coolify-API
 ## Aktueller Schritt
 Schritt 1: Check-Engine als CLI, ohne Portal und Datenbank. Erfolg: Auf allen Testprojekten stimmen die Funde, keine Fehlalarme.
 
-Stand: Stack-Erkennung steht (`engine/`, `npm test`, 9 Tests grün). Alle 5 Code-Bereiche stehen noch auf „offen“. Nächste Module: gitleaks (Bereich 1), semgrep (2, 5), osv-scanner (5), Claude-Auswertung (2, 3, 4).
+Stand: Stack-Erkennung und Bereich 1 (Geheimnisse) stehen (`engine/`, `npm test`, 23 Tests grün). Bereiche 2 bis 5 stehen noch auf „offen“.
+Bereich 1 nutzt einen eingebauten Detektor (nur sichere Muster: Anbieter-Schlüssel, Passwörter in Datenbank-URLs, private Schlüssel, eingecheckte `.env`). gitleaks ließ sich in der Cloud-Umgebung nicht installieren (Netzwerk gesperrt); ein Adapter kann später hinter `scanSecrets()` eingehängt werden.
+Kundensicht ist Standard (keine Datei/Zeile), `--intern` zeigt Belege nur für Sebastian.
+Nächste Module: semgrep (2, 5), osv-scanner (5), Claude-Auswertung (2, 3, 4).
 Testprojekte vor jedem Lauf mit `bash testprojekte/materialize.sh /tmp/livedock-fixtures` erzeugen.

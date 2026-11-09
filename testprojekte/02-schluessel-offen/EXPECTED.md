@@ -4,7 +4,7 @@
 
 | Bereich | Erwartet | Hinweis |
 |---|---|---|
-| 1 Geheimnisse | 🔴, 2 Funde | (a) KI-Schlüssel fest im Code, (b) `.env` mit Datenbank-Zugang im Repository |
+| 1 Geheimnisse | 🔴, 3 Funde | (a) KI-Schlüssel fest im Code, (b) `.env` mit Zugangsdaten im Repository, (c) Datenbank-Passwort in derselben `.env`. (b) und (c) dürfen im Ergebnis zu einem Fund zusammengefasst werden. |
 | 2 Zugang und Rechte | 🟢, 0 Funde | Login in der Route, RLS mit Policy |
 | 3 Daten und Datenschutz | 🟡 oder 🟢 | Nur Kurstitel gehen an den KI-Dienst (OpenAI, USA): höchstens 1 Fund „Drittland-Dienst“, Konfidenz prüfen |
 | 4 KI-Anbindung | 🟡, 1 Fund | OpenAI ohne EU-Region, kein Limit pro Nutzer |

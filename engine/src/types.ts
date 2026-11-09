@@ -40,10 +40,38 @@ export interface StackInfo {
   fileCount: number;
 }
 
+export type Severity = "hoch" | "mittel" | "niedrig";
+
+/**
+ * A finding as the customer may see it (hard rule 4): category, impact,
+ * rough area. No file, no line, no code, no fix. The only exception is a
+ * real key, which is named with a masked hint (hard rule 2).
+ */
+export interface Finding {
+  id: string;
+  area: AreaId;
+  severity: Severity;
+  kategorie: string;
+  auswirkung: string;
+  /** rough area, e.g. "Code", "Konfiguration" */
+  bereich: string;
+  /** 0..1; findings below the threshold are dropped before output */
+  konfidenz: number;
+  /** real key or open database: banner above everything */
+  acute: boolean;
+  /** masked hint such as "sk-…5678"; never the secret itself */
+  hinweis?: string;
+  /** internal evidence for Sebastian only; stripped from customer output */
+  intern?: { datei: string; zeile: number; regel: string };
+}
+
 export interface CheckResult {
   engineVersion: string;
   stack: StackInfo;
   /** only set when the stack alone already decides (codes 5 and 6) */
   result: ResultCode | null;
+  /** true if at least one finding is acute (result 4 banner) */
+  acute: boolean;
   areas: AreaResult[];
+  findings: Finding[];
 }

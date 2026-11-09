@@ -77,17 +77,24 @@ test("kaputte package.json wird nicht als Node-Projekt gewertet", () => {
   assert.equal(runCheck(d).stack.status, "nicht_unterstuetzt");
 });
 
-test("Bereiche bleiben 'offen', solange kein Modul geprüft hat", () => {
+test("Bereiche ohne Modul bleiben 'offen', nur Geheimnisse ist geprüft", () => {
   const r = runCheck(join(fx, "01-sauber"));
-  assert.ok(r.areas.every((a) => a.ampel === "offen"));
   assert.equal(r.areas.length, 5);
+  for (const a of r.areas) assert.equal(a.ampel, a.id === "geheimnisse" ? "gruen" : "offen");
 });
 
-test("CLI: Ausgabe enthält weder Pfade noch Dateinamen der Testprojekte", () => {
+test("Nicht unterstützter Stack: kein Bereich wird als geprüft ausgewiesen", () => {
+  const d = join(tmp, "go");
+  mkdirSync(d);
+  writeFileSync(join(d, "go.mod"), "module x\n");
+  assert.ok(runCheck(d).areas.every((a) => a.ampel === "offen"));
+});
+
+test("CLI: Ausgabe enthält weder Pfade noch Dateinamen noch den Schlüssel (nur maskierter Hinweis)", () => {
   const out = execFileSync("node", [join(root, "engine/src/cli.ts"), "check", join(fx, "02-schluessel-offen")], {
     encoding: "utf8",
   });
   assert.match(out, /stack: nextjs/);
-  assert.doesNotMatch(out, /ai\.ts|route\.ts|\.env|T3BlbkFJ|sk-/);
+  assert.doesNotMatch(out, /ai\.ts|route\.ts|T3BlbkFJ|sk-TESTONLY/);
   assert.doesNotMatch(out, new RegExp(fx.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
 });
