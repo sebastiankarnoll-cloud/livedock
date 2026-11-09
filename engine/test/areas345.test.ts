@@ -208,3 +208,33 @@ test("Ergebnis: 'Umbau nötig' setzt die Engine nie selbst, viele schwere Funde 
   assert.equal(r.result, "behebbar");
   assert.notEqual(r.result, "umbau_noetig");
 });
+
+test("Fortschritt: onStep meldet Stack und alle fünf Bereiche in fester Reihenfolge", async () => {
+  const { execFileSync } = await import("node:child_process");
+  const { mkdtempSync } = await import("node:fs");
+  const { tmpdir } = await import("node:os");
+  const { join, resolve } = await import("node:path");
+  const { runCheck } = await import("../src/check.ts");
+  const out = mkdtempSync(join(tmpdir(), "livedock-step-"));
+  execFileSync("bash", [resolve(import.meta.dirname, "../../testprojekte/materialize.sh"), out], { stdio: "pipe" });
+  const seen: string[] = [];
+  runCheck(join(out, "03-zugriff-fehlt"), { onStep: (id) => seen.push(id) });
+  assert.deepEqual(seen, ["stack", "geheimnisse", "zugang_rechte", "daten_datenschutz", "ki_anbindung", "code_bausteine"]);
+});
+
+test("Testdateien werden von den Code-Regeln übersprungen, der Geheimnis-Scan nicht", () => {
+  const out = mkdtempSync(join(tmpdir(), "livedock-tf-"));
+  const files: Record<string, string> = {
+    "package.json": '{"dependencies":{"next":"15.0.0"}}',
+    "lib/x.test.ts": 'const k = process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY;\nconsole.log(user.password);\n',
+    "test/y.ts": "const k = process.env.NEXT_PUBLIC_OPENAI_API_KEY;\n",
+  };
+  for (const [rel, text] of Object.entries(files)) {
+    mkdirSync(join(out, rel, ".."), { recursive: true });
+    writeFileSync(join(out, rel), text);
+  }
+  assert.deepEqual(runCheck(out).findings, []);
+  // the same text in a normal file is still found
+  writeFileSync(join(out, "lib/z.ts"), "const k = process.env.NEXT_PUBLIC_OPENAI_API_KEY;\n");
+  assert.ok(runCheck(out).findings.some((f) => f.intern?.regel === "public-ai-key"));
+});

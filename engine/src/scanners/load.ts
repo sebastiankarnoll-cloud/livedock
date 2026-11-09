@@ -1,4 +1,4 @@
-import { walkFiles, readText } from "./walk.ts";
+import { walkFiles, readText, isTestFile } from "./walk.ts";
 
 export interface Src {
   rel: string;
@@ -15,6 +15,7 @@ export function loadSources(root: string): { sources: Src[]; sql: Src[] } {
     const isSrc = SRC_EXT.test(f.name);
     const isSql = f.name.endsWith(".sql");
     if (!isSrc && !isSql) continue;
+    if (isSrc && isTestFile(f.rel)) continue;
     const text = readText(f);
     if (text === null) continue;
     (isSql ? sql : sources).push({ rel: f.rel, text });

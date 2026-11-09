@@ -1,8 +1,14 @@
 import { makePool } from "../lib/db.ts";
 import pg from "pg";
 
-export const APP_URL = "postgres://livedock_app:app@localhost:5432/livedock_test";
-export const ADMIN_URL = "postgres://livedock_owner:owner@localhost:5432/livedock_test";
+const need = (k: string) => {
+  const v = process.env[k];
+  if (!v) throw new Error(`${k} missing (run npm run db:setup)`);
+  return v;
+};
+export const APP_URL = need("TEST_DATABASE_URL");
+export const ADMIN_URL = need("TEST_DATABASE_ADMIN_URL");
+export const WORKER_URL = need("TEST_DATABASE_WORKER_URL");
 
 export function pools(): { app: pg.Pool; admin: pg.Pool } {
   return { app: makePool(APP_URL), admin: makePool(ADMIN_URL) };

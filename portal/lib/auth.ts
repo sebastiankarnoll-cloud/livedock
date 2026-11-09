@@ -15,7 +15,8 @@ export class InputError extends Error {
   }
 }
 
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+// Plain addresses only. No quotes, brackets, commas or semicolons: the address goes into a mail header.
+const EMAIL = /^[A-Za-z0-9._%+-]{1,64}@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
 
 export const hashToken = (t: string) => createHash("sha256").update(t).digest("hex");
 const newToken = () => randomBytes(32).toString("base64url");

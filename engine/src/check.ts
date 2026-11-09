@@ -31,8 +31,13 @@ const REQUIRED_FOR_GOOD: AreaId[] = ["geheimnisse", "zugang_rechte", "daten_date
 
 export const OSV_NOTE = "Bausteine mit bekannten Sicherheitslücken sind noch nicht geprüft.";
 
-export function runCheck(dir: string, opts: { auditRunner?: Runner } = {}): CheckResult {
+export type StepId = "stack" | AreaId;
+
+/** onStep is called after the stack detection and after each area is done (for the progress display). */
+export function runCheck(dir: string, opts: { auditRunner?: Runner; onStep?: (id: StepId) => void } = {}): CheckResult {
+  const step = (id: StepId) => opts.onStep?.(id);
   const stack = detectStack(dir);
+  step("stack");
 
   let result: ResultCode | null = null;
   if (stack.status === "nicht_unterstuetzt") result = "stack_nicht_unterstuetzt";
@@ -59,6 +64,7 @@ export function runCheck(dir: string, opts: { auditRunner?: Runner } = {}): Chec
     findings = findings.concat(secrets);
     setArea("geheimnisse", fromFindings(secrets));
     if (secrets.length === 0) positives.push("Keine Schlüssel oder Passwörter im Code gefunden");
+    step("geheimnisse");
 
     const { sources, sql: _sql } = loadSources(dir);
 
@@ -71,6 +77,7 @@ export function runCheck(dir: string, opts: { auditRunner?: Runner } = {}): Chec
     if (access.stats.routes > 0 && access.stats.authed > 0 && !accessF.some((f) => f.intern?.regel === "route-without-auth"))
       positives.push("Anmeldung wird auf dem Server geprüft");
     if (access.stats.tables > 0 && access.stats.tablesWithoutRls === 0) positives.push("Zugriffsregeln in der Datenbank vorhanden");
+    step("zugang_rechte");
 
     // 3 Daten und Datenschutz, 4 KI-Anbindung
     const usage = analyzeAiUsage(sources);
@@ -78,6 +85,7 @@ export function runCheck(dir: string, opts: { auditRunner?: Runner } = {}): Chec
     const dataF = keep(data.findings);
     findings = findings.concat(dataF);
     setArea("daten_datenschutz", data.examined ? fromFindings(dataF) : "offen");
+    step("daten_datenschutz");
 
     const ai = scanAi(sources, usage.aiFiles, usage.aiRoutes, data.personalToAi, stack.features.ai.length);
     const aiF = keep(ai.findings);
@@ -87,6 +95,7 @@ export function runCheck(dir: string, opts: { auditRunner?: Runner } = {}): Chec
     else setArea("ki_anbindung", "offen", "KI-Bibliothek vorhanden, aber kein erkennbarer Aufruf. Nicht geprüft.");
     if (stack.features.ai.length > 0 && stack.features.ai.every((p) => p === "mistral")) positives.push("KI-Dienst in der EU");
     if (ai.rateLimited) positives.push("Limit für KI-Aufrufe pro Nutzer vorhanden");
+    step("ki_anbindung");
 
     // 5 Code und Bausteine: own pattern rules plus the check for known package
     // vulnerabilities. Green only if that second part really ran on exact
@@ -103,6 +112,7 @@ export function runCheck(dir: string, opts: { auditRunner?: Runner } = {}): Chec
     }
     if (deps.status === "geprueft" && deps.findings.length === 0) positives.push("Bausteine ohne bekannte Sicherheitslücken");
     if (stack.features.validation && !code.bodyUnvalidated) positives.push("Eingaben werden geprüft");
+    step("code_bausteine");
   }
 
   const acute = findings.some((f) => f.acute);

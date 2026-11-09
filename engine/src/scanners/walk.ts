@@ -7,6 +7,10 @@ export const SKIP_DIRS = new Set(["node_modules", ".git", ".next", "dist", "buil
 const SKIP_FILES = new Set(["package-lock.json", "pnpm-lock.yaml", "yarn.lock", "bun.lockb"]);
 const MAX_BYTES = 1_000_000;
 
+/** Test files are not deployed. Code-pattern rules skip them; the secret scan does not (a real key in a test is still a leak). */
+export const TEST_FILE = /(^|\/)(__tests__|tests?|e2e)\/|\.(test|spec)\./;
+export const isTestFile = (rel: string) => TEST_FILE.test(rel);
+
 export interface SourceFile {
   /** path relative to the project root, internal use only */
   rel: string;

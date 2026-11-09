@@ -1,4 +1,4 @@
-import { walkFiles, readText } from "./walk.ts";
+import { walkFiles, readText, isTestFile } from "./walk.ts";
 import type { Finding } from "../types.ts";
 
 // Area 2: access and permissions. Own rules, conservative on purpose
@@ -101,6 +101,7 @@ export function scanAccess(root: string, supabase: boolean): AccessScan {
     const isSrc = SRC_EXT.test(f.name);
     const isSql = f.name.endsWith(".sql");
     if (!isSrc && !isSql) continue;
+    if (isSrc && isTestFile(f.rel)) continue;
     const text = readText(f);
     if (text === null) continue;
     (isSql ? sqlFiles : sources).push({ rel: f.rel, text });

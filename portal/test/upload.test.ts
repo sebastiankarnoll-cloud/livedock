@@ -5,14 +5,14 @@ import { mkdtempSync, rmSync, existsSync, readFileSync, writeFileSync, readdirSy
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { makeZip } from "./zipmaker.ts";
-import { pools, reset } from "./helpers.ts";
+import { pools, reset, WORKER_URL } from "./helpers.ts";
 import { makePool, withUser } from "../lib/db.ts";
 import { ensureCase } from "../lib/cases.ts";
 import { saveProject, UploadError, projectDirIfPresent } from "../lib/upload.ts";
 import { purgeExpired } from "../lib/purge.ts";
 
 const { app, admin } = pools();
-const worker = makePool("postgres://livedock_worker:worker@localhost:5432/livedock_test");
+const worker = makePool(WORKER_URL);
 let root = "";
 let a = "", b = "", caseA = "", caseB = "";
 const mk = (z: Buffer) => Readable.from([z]);

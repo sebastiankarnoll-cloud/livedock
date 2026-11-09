@@ -1,8 +1,6 @@
 import { Readable } from "node:stream";
-import { cookies } from "next/headers";
 import { getPool } from "../../../lib/db.ts";
-import { getSessionUser } from "../../../lib/auth.ts";
-import { COOKIE } from "../../../lib/session.ts";
+import { currentUser } from "../../../lib/session.ts";
 import { ensureCase } from "../../../lib/cases.ts";
 import { saveProject, UploadError, MAX_UPLOAD_BYTES } from "../../../lib/upload.ts";
 
@@ -27,8 +25,7 @@ export async function PUT(req: Request) {
   if (req.headers.get("x-livedock") !== "1") return json(403, { fehler: "Nicht erlaubt." });
 
   const pool = getPool();
-  const jar = await cookies();
-  const user = await getSessionUser(pool, jar.get(COOKIE)?.value);
+  const user = await currentUser();
   if (!user) return json(401, { fehler: "Bitte melde Dich an." });
 
   const len = Number(req.headers.get("content-length") ?? "0");

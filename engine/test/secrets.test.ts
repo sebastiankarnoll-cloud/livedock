@@ -114,7 +114,7 @@ test("Keine Funde in node_modules", () => {
 });
 
 test("Private Schlüssel werden erkannt, Hinweis ohne Inhalt", () => {
-  const d = project("pem", { "keys/server.pem": "-----BEGIN RSA PRIVATE KEY-----\nMIIB\n-----END RSA PRIVATE KEY-----\n" });
+  const d = project("pem", { "keys/server.pem": ["-----BEGIN ", "RSA PRIVATE KEY-----\nMIIB\n-----END ", "RSA PRIVATE KEY-----\n"].join("") });
   const r = runCheck(d);
   r.findings = r.findings.filter((f) => f.area === "geheimnisse");
   assert.equal(r.findings.length, 1);

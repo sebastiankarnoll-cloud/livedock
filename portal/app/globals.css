@@ -37,3 +37,10 @@ input[type=email]:focus-visible, button:focus-visible, a:focus-visible { outline
 .err { border: 1px solid var(--err); color: var(--err); border-radius: 4px; padding: 12px 16px; font-size: 14px; }
 .box { background: var(--chrome); border: 1px solid var(--line); border-radius: 4px; padding: 16px 18px; color: var(--soft); font-size: 14px; }
 .linkbtn { background: none; border: 0; color: var(--cyan); font: inherit; font-size: 14px; cursor: pointer; text-decoration: underline; padding: 0; }
+input[type=text], select { width: 100%; padding: 12px 14px; background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 4px; font: inherit; }
+input[type=text]:focus-visible, select:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.choice { display: flex; gap: 12px; align-items: center; padding: 12px 14px; border: 1px solid var(--line); border-radius: 4px; background: var(--chrome); font-weight: 400; }
+.choice input { width: 20px; height: 20px; accent-color: var(--accent); }
+.term { background: var(--chrome); border: 1px solid var(--line); border-radius: 4px; }
+.term > div:first-child { background: var(--userbar); border-bottom: 1px solid var(--line); padding: 8px 16px; font-size: 12px; color: var(--dim); }
+.term ul { list-style: none; margin: 0; padding: 16px 18px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--soft); }

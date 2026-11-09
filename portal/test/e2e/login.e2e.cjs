@@ -17,7 +17,7 @@ const base = process.env.E2E_URL || "http://localhost:3100";
   await page.check("input[name=consent]");
   await page.click("button[type=submit]");
   await page.waitForURL("**/postfach");
-  assert.ok(await page.getByText("Schau in Dein Postfach.").isVisible());
+  await page.getByRole("heading", { name: "Schau in Dein Postfach." }).waitFor();
 
   await page.goto(base + "/dev/postfach");
   const link = await page.locator("a", { hasText: "/anmelden/bestaetigen?t=" }).first().getAttribute("href");
@@ -25,15 +25,15 @@ const base = process.env.E2E_URL || "http://localhost:3100";
 
   // opening the link must NOT log in yet
   await page.goto(link);
-  assert.ok(await page.getByRole("button", { name: "Jetzt anmelden" }).isVisible());
+  await page.getByRole("button", { name: "Jetzt anmelden" }).waitFor();
   await page.goto(base + "/verbinden");
   assert.match(page.url(), /\/anmelden$/, "link opened but no login before button");
 
   await page.goto(link);
   await page.click("button[type=submit]");
   await page.waitForURL("**/verbinden");
-  assert.ok(await page.getByText("Lade Dein Projekt als ZIP-Datei hoch.").isVisible());
-  assert.ok(await page.getByText("Abmelden (" + email + ")").isVisible());
+  await page.getByRole("heading", { name: "Lade Dein Projekt als ZIP-Datei hoch." }).waitFor();
+  await page.getByText("Abmelden (" + email + ")").waitFor();
 
   // upload: wrong file first, then a real zip
   const fs = require("node:fs"), os = require("node:os"), path = require("node:path");
@@ -50,8 +50,17 @@ const base = process.env.E2E_URL || "http://localhost:3100";
   execFileSync("python3", ["-c", "import zipfile,sys;z=zipfile.ZipFile(sys.argv[1],'w');z.write(sys.argv[2]+'/package.json','package.json');z.close()", zip, dir]);
   await page.setInputFiles("#zip", zip);
   await page.click("text=Hochladen und weiter");
-  await page.getByText("Dein Projekt ist angekommen.").waitFor();
-  assert.ok(await page.getByText("e2e-proj.zip: 1 Dateien").isVisible());
+  await page.waitForURL("**/fragen");
+  await page.getByRole("heading", { name: "Vier kurze Fragen zu Deinem Tool." }).waitFor();
+  await page.fill("#purpose", "E2E-Test");
+  await page.click("text=Check starten");
+  await page.waitForURL("**/laeuft");
+  await page.getByRole("heading", { name: "Wir prüfen Dein Projekt." }).waitFor();
+  await page.waitForURL("**/wartet", { timeout: 60000 });
+  await page.getByRole("heading", { name: "Wir schauen noch einmal persönlich drüber." }).waitFor();
+  // a stage is a stage: the customer cannot go back to earlier screens
+  await page.goto(base + "/verbinden");
+  assert.match(page.url(), /\/wartet$/);
 
   const cookie = (await ctx.cookies()).find((c) => c.name === "ld_session");
   assert.ok(cookie && cookie.httpOnly && cookie.sameSite === "Lax");
@@ -61,7 +70,7 @@ const base = process.env.E2E_URL || "http://localhost:3100";
   await page2.goto(link);
   await page2.click("button[type=submit]");
   await page2.waitForURL("**/anmelden?fehler=link");
-  assert.ok(await page2.getByText("abgelaufen oder wurde schon benutzt").isVisible());
+  await page2.getByText("abgelaufen oder wurde schon benutzt").waitFor();
 
   await page.screenshot({ path: process.env.E2E_SHOT || "/tmp/portal-verbinden.png" });
   await page.click("text=Abmelden");

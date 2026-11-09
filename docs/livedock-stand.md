@@ -316,7 +316,7 @@ Server-Zugriff besteht ohnehin über das Hetzner-Konto des Kunden, eingeschränk
 - **Prüfung:** nur Code, keine echten Daten
 - **KI-Dienste:** Datenflüsse in die USA sind oft der kritische Punkt. Empfehlung: EU-Regionen oder europäische Anbieter.
 - **Eigene KI:** EU-Betrieb (z. B. Claude über eine EU-Cloud-Region oder Mistral), AVV, kein Training mit Kundencode
-- **Eigene Sicherheit:** Kunden strikt getrennt, Geheimnisse verschlüsselt, Zugriffsprotokoll. livedock muss sauberer sein als seine Kunden.
+- **Eigene Sicherheit:** Kunden strikt getrennt, Geheimnisse verschlüsselt, Zugriffsprotokoll. livedock muss sauberer sein als seine Kunden. Umgesetzt: Vor jedem Commit prüft die eigene Engine den eigenen Code (Selbstcheck), jeder Fund blockiert. Fakten dazu: `docs/technik-und-datenschutz.md`.
 - **Haftung:** Bewertung als konzeptionelle Einschätzung, Verantwortung für den Einsatz beim Kunden. Im Paket stammen die Korrekturen von livedock, deshalb kein Prompt-Weg im Paket.
 - **Marke:** keine aktive DE/EU-Marke „livedock" gefunden (EU-Marke von 2011 abgelaufen). In den USA gibt es Anmeldungen von RoadSync (Klassen 9/42, Logistik-Zahlungssoftware). Empfehlung: eigene DPMA-Anmeldung (Klassen 42, 35). Keine Rechtsberatung, vor Anmeldung prüfen lassen.
 

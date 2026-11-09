@@ -41,7 +41,7 @@ export function smtpMailer(cfg: SmtpConfig): Mailer {
   };
 }
 
-export function smtpConfigFromEnv(env = process.env): SmtpConfig {
+export function smtpConfigFromEnv(env: Record<string, string | undefined> = process.env): SmtpConfig {
   const need = (k: string) => {
     const v = env[k];
     if (!v) throw new Error(`${k} missing`);

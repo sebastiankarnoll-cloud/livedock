@@ -9,12 +9,13 @@
     "db:setup": "bash scripts/dev-db.sh",
     "migrate": "node scripts/migrate.ts",
     "purge": "node scripts/purge.ts",
+    "worker": "node scripts/worker.ts",
     "test:e2e": "node test/e2e/login.e2e.cjs",
-    "test": "node --test --test-concurrency=1 \"test/*.test.ts\""
+    "test": "node --env-file=.env --test --test-concurrency=1 \"test/*.test.ts\""
   },
   "dependencies": {
-    "next": "^15.5.0",
-    "nodemailer": "^6.10.1",
+    "next": "^16.4.5",
+    "nodemailer": "^10.4.0",
     "pg": "^8.13.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
