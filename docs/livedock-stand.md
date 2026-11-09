@@ -365,7 +365,8 @@ Anfangs laufen 3–5 halbmanuell mit Skripten per Claude Code. Automatisieren, w
 - [ ] Zahlung: Vorschlag 50 % bei Buchung, 50 % bei Abnahme
 - [ ] Schnellcheck-Ergebnis: erste 5–10 mit Freigabe, danach automatisch (Vorschlag, noch nicht bestätigt)
 - [x] Fundorte im Ergebnis: nur Kategorie, Auswirkung und grober Bereich, keine Datei und Zeile, keine Lösung (Sebastian, 09.11.2026)
-- [ ] Akuter Fund vor der Freigabe: Sofortmeldung an Sebastian, bevorzugte Durchsicht, Kunde sieht nichts vor Freigabe (Vorschlag, noch nicht bestätigt)
+- [x] Akuter Fund vor der Freigabe: Sofortmeldung an Sebastian aufs Handy, bevorzugte Durchsicht, Kunde sieht nichts vor Freigabe (Sebastian, 09.11.2026)
+- [ ] Ergänzung zum akuten Fund: Reagiert Sebastian binnen ca. 2 Std. nicht, geht eine minimale Warnung („echter Schlüssel offen, bitte sofort erneuern“, nur maskierter Anfang) automatisch raus. Widerspricht Regel 5, nur auf ausdrücklichen Wunsch.
 - [ ] Login und Rollen: ab welchem Umfang kippt es in ein eigenes Angebot?
 - [ ] Testrunden: eine Korrekturschleife inklusive (Vorschlag)
 - [ ] Betrieb: Reaktionszeit 1 Arbeitstag? Störungen über denselben Button wie Wünsche?
