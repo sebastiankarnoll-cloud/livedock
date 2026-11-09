@@ -9,7 +9,7 @@ export function pools(): { app: pg.Pool; admin: pg.Pool } {
 }
 
 export async function reset(admin: pg.Pool) {
-  await admin.query("truncate users, outbox cascade");
+  await admin.query("truncate users, outbox, deletion_log cascade");
 }
 
 /** Pulls the login token out of the newest mail in the outbox. */

@@ -32,7 +32,26 @@ const base = process.env.E2E_URL || "http://localhost:3100";
   await page.goto(link);
   await page.click("button[type=submit]");
   await page.waitForURL("**/verbinden");
-  assert.ok(await page.getByText("Angemeldet als " + email).isVisible());
+  assert.ok(await page.getByText("Lade Dein Projekt als ZIP-Datei hoch.").isVisible());
+  assert.ok(await page.getByText("Abmelden (" + email + ")").isVisible());
+
+  // upload: wrong file first, then a real zip
+  const fs = require("node:fs"), os = require("node:os"), path = require("node:path");
+  const txt = path.join(os.tmpdir(), "kein-zip.zip");
+  fs.writeFileSync(txt, "kein zip");
+  await page.setInputFiles("#zip", txt);
+  await page.click("text=Hochladen und weiter");
+  await page.getByText("Das ist keine ZIP-Datei.").waitFor();
+  const { execFileSync } = require("node:child_process");
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "proj-"));
+  fs.writeFileSync(path.join(dir, "package.json"), '{"name":"x"}');
+  const zip = path.join(os.tmpdir(), "e2e-proj.zip");
+  fs.rmSync(zip, { force: true });
+  execFileSync("python3", ["-c", "import zipfile,sys;z=zipfile.ZipFile(sys.argv[1],'w');z.write(sys.argv[2]+'/package.json','package.json');z.close()", zip, dir]);
+  await page.setInputFiles("#zip", zip);
+  await page.click("text=Hochladen und weiter");
+  await page.getByText("Dein Projekt ist angekommen.").waitFor();
+  assert.ok(await page.getByText("e2e-proj.zip: 1 Dateien").isVisible());
 
   const cookie = (await ctx.cookies()).find((c) => c.name === "ld_session");
   assert.ok(cookie && cookie.httpOnly && cookie.sameSite === "Lax");

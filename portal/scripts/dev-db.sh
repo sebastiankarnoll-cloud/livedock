@@ -8,6 +8,9 @@ do $$ begin
   if not exists (select from pg_roles where rolname = 'livedock_owner') then
     create role livedock_owner login password 'owner' createdb;
   end if;
+  if not exists (select from pg_roles where rolname = 'livedock_worker') then
+    create role livedock_worker login password 'worker' nosuperuser bypassrls;
+  end if;
   if not exists (select from pg_roles where rolname = 'livedock_app') then
     create role livedock_app login password 'app' nosuperuser nobypassrls;
   end if;

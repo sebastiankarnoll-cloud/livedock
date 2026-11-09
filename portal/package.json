@@ -8,6 +8,7 @@
     "start": "next start",
     "db:setup": "bash scripts/dev-db.sh",
     "migrate": "node scripts/migrate.ts",
+    "purge": "node scripts/purge.ts",
     "test:e2e": "node test/e2e/login.e2e.cjs",
     "test": "node --test --test-concurrency=1 \"test/*.test.ts\""
   },
@@ -16,7 +17,8 @@
     "nodemailer": "^6.10.1",
     "pg": "^8.13.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "yauzl": "^3.4.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
@@ -24,6 +26,7 @@
     "@types/pg": "^8.11.0",
     "@types/react": "^19.1.0",
     "@types/smtp-server": "^3.5.13",
+    "@types/yauzl": "^3.4.0",
     "smtp-server": "^3.21.3",
     "typescript": "^5.6.0"
   }
