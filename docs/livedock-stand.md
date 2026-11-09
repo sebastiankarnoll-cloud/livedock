@@ -1,6 +1,6 @@
 # livedock. – Stand der Ausarbeitung
 
-Stand: 07.11.2026 · Status: Konzept und Mockups, noch nichts gebaut · erste echte Anfrage über LinkedIn (05.11.)
+Stand: 09.11.2026 · Status: Check-Engine (Bereiche 1 bis 5) gebaut, Portal-Entwurf des ganzen Kundenwegs gezeichnet · erste echte Anfrage über LinkedIn (05.11.)
 
 ---
 
@@ -147,7 +147,7 @@ Der Schnellcheck ist der wichtigste Moment. Hier entscheidet sich, ob jemand Cod
 - Zeigen: Anzahl je Schweregrad, Kategorie und Auswirkung, **grober Bereich** (z. B. „Login", „Datenbank", „KI-Anbindung"), Positives, Passung, Festpreis
 - Nicht zeigen: Datei und Zeile, Lösungen, Code-Ausschnitte, die vollständige Liste kleiner Funde
 - **Ausnahme:** Ein echter Schlüssel im Code wird immer klar benannt (maskiert) mit „sofort erneuern"
-- Ergebnis ist ein Schnappschuss, erneute Checks erst nach Buchung oder gegen Gebühr
+- Ergebnis ist ein Schnappschuss. Ein kostenloser Check pro Projekt und E-Mail-Adresse, weitere Checks erst nach Buchung (Teil des Pakets) oder gegen Gebühr
 
 **Aufbau der Ergebnisseite:** 1 Einordnung (Ampel plus ein Satz, kein Alarmton) · 2 Funde · 3 Positives · 4 Was für den Live-Gang fehlt · 5 Passung · 6 Festpreis (Zusatzoptionen erst beim Buchen) · 7 Buttons: „Paket buchen", „20 Min. Gespräch", „Angebot als PDF" · 8 Mensch dahinter (Foto, Name)
 
@@ -232,10 +232,12 @@ Server-Zugriff besteht ohnehin über das Hetzner-Konto des Kunden, eingeschränk
 
 | Schritt | Bildschirm | Stand |
 |---|---|---|
-| 1 Prüfen | Code verbinden | Mockup |
-| | 2a Fragen (neu, getrennt) | zu erstellen |
-| | 2b Schnellcheck läuft | Mockup (anpassen) |
-| | Ergebnis Schnellcheck (4 Vorlagen: Festpreis, kein Festpreis, persönlich melden, Absage) | Mockup (anpassen) |
+| 1 Prüfen | Anmelden (E-Mail, Einwilligung) und Postfach | gezeichnet (09.11.) |
+| | Code verbinden | gezeichnet (09.11.) |
+| | 2a Fragen | gezeichnet (09.11.) |
+| | 2b Schnellcheck läuft, Persönliche Durchsicht, Mail mit Link | gezeichnet (09.11.) |
+| | Ergebnis (Behebbar), Details, Akuter Fund, Projekttyp nicht unterstützt, Steuerzentrale Freigabe | gezeichnet (09.11.) |
+| | Ergebnis-Vorlagen: kein Festpreis, persönlich melden, Absage, leer, außerhalb, Zielumgebung | fehlt |
 | 2 Starten | Paket buchen | Mockup |
 | | AVV und Rechnungsdaten, Einladungen | fehlt |
 | | Hetzner-Konto einrichten | fehlt |
@@ -362,7 +364,8 @@ Anfangs laufen 3–5 halbmanuell mit Skripten per Claude Code. Automatisieren, w
 - [ ] Preise: Go-Live-Paket, Starter, Betrieb, Zusatzoptionen, Video-Einweisung (nach 2–3 echten Checks)
 - [ ] Zahlung: Vorschlag 50 % bei Buchung, 50 % bei Abnahme
 - [ ] Schnellcheck-Ergebnis: erste 5–10 mit Freigabe, danach automatisch (Vorschlag, noch nicht bestätigt)
-- [ ] Fundorte im Ergebnis: grob zeigen („Bereich Login") oder ganz weglassen (Vorschlag: grob)
+- [x] Fundorte im Ergebnis: nur Kategorie, Auswirkung und grober Bereich, keine Datei und Zeile, keine Lösung (Sebastian, 09.11.2026)
+- [ ] Akuter Fund vor der Freigabe: Sofortmeldung an Sebastian, bevorzugte Durchsicht, Kunde sieht nichts vor Freigabe (Vorschlag, noch nicht bestätigt)
 - [ ] Login und Rollen: ab welchem Umfang kippt es in ein eigenes Angebot?
 - [ ] Testrunden: eine Korrekturschleife inklusive (Vorschlag)
 - [ ] Betrieb: Reaktionszeit 1 Arbeitstag? Störungen über denselben Button wie Wünsche?
@@ -381,5 +384,19 @@ Anfangs laufen 3–5 halbmanuell mit Skripten per Claude Code. Automatisieren, w
 - **Website (Version „Kurz", aktuell):** https://claude.ai/artifact/4SFrqD6NbBSncQSZMHtNq5 · Kernaussage pro Antwort, ein erklärender Satz, Schlagworte, fester Button „kostenlos checken"
 - **Website (Version „Dunkel", ausführlicher):** https://claude.ai/artifact/XJEoRcoc9uZtvXpjN2LF4r
 - **CI-Leitfaden:** https://claude.ai/artifact/Xrt2FNRKGtBYevQLaMHDDY
-- **Kundenportal (Mockups):** https://claude.ai/artifact/AqBZvCbyZBwbwMVkDp2w5Z
+- **Kundenportal (Mockups, alt):** https://claude.ai/artifact/AqBZvCbyZBwbwMVkDp2w5Z
+- **Portal-Entwurf, ganzer Weg (neu, 09.11.):** https://claude.ai/artifact/6w6aKKDmd9UpYu3n4SATpa · Übersicht plus alle Bildschirme, ein Schritt pro Bildschirm
+- **Prüfgerät (Statusseite der Engine):** https://claude.ai/artifact/NqynDABjXXXFRyfYSUNLDY
 - Verworfen: Varianten Petrol, Papier, Mix, Hell sowie das erste Website-Mockup
+
+---
+
+## 14. Stand Check-Engine (09.11.2026)
+
+- Engine 0.5.0 als CLI (`livedock check ./repo`), 71 Tests plus 3 Live-Tests. Bereiche 1 bis 5 und Ergebnis-Regel stehen, auf den Testprojekten 01 bis 03 stimmen alle Funde, keine Fehlalarme.
+- Nur sichere Funde (Konfidenz mindestens 0,8). Die Engine setzt „3 Umbau nötig“ nie selbst, sie gibt ab 6 schweren Funden nur einen Hinweis für Sebastian.
+- Bausteine mit bekannten Lücken: Abgleich über `npm audit`. Grün nur mit Lockfile und erfolgreichem Abgleich.
+- **Entscheidung (09.11.2026): livedock läuft in Deutschland (Hetzner), KI nur in der EU, keine Abfragen in die USA.** Produktiv läuft der Lücken-Abgleich über eine lokale Kopie der Datenbank auf dem EU-Server. Echter Kundencode wird nie in der Cloud-Entwicklungsumgebung geprüft.
+- EU-KI (Recherche): Claude über regionale Endpunkte bei AWS Bedrock oder Google Vertex, Mistral als Alternative. Modellverfügbarkeit je Region vor dem Bau prüfen. Nicht eilig, Bereiche 1 bis 5 laufen ohne KI.
+- **Entscheidung (09.11.2026): ein kostenloser Check pro Projekt und E-Mail-Adresse.** Zweck: Der Check soll nicht zum Selbstreparieren reichen.
+- Offen: gitleaks-Vergleich auf Sebastians Rechner oder dem Server, Schwelle für Lücken ohne verfügbaren Fix, Probelauf mit echtem Projekt, Testprojekte 04 bis 07.
