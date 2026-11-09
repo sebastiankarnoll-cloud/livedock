@@ -66,7 +66,7 @@ ul.plain li { display: grid; grid-template-columns: 1.6em minmax(0, 1fr); gap: 1
 
 <main>
   <section>
-    <p class="stamp">Stand 09.11.2026 · Prüfgerät Version 0.4.0 · nur für Sebastian</p>
+    <p class="stamp">Stand 09.11.2026 · Prüfgerät Version 0.5.0 · nur für Sebastian</p>
     <h1>livedock<span class="dot">.</span> Prüfgerät</h1>
     <p class="lead">Das Prüfgerät liest ein Kundenprojekt und sagt, was daran nicht sicher ist. Diese Seite zeigt, was es heute schon kann und was noch fehlt. Wir aktualisieren sie nach jedem Schritt.</p>
   </section>
@@ -74,7 +74,7 @@ ul.plain li { display: grid; grid-template-columns: 1.6em minmax(0, 1fr); gap: 1
   <section>
     <h2>Die fünf Prüfpunkte</h2>
     <div class="panel">
-      <header><span>4 von 5 fertig, 1 teilweise</span><span>60 von 60 Selbsttests bestanden</span></header>
+      <header><span>5 von 5 gebaut</span><span>71 von 71 Selbsttests bestanden, dazu 3 Tests mit Netz</span></header>
       <div class="body">
         <div class="row">
           <span class="mark ok">✓</span><span class="name">1 Geheimnisse</span><span class="pill ok">fertig</span>
@@ -93,8 +93,8 @@ ul.plain li { display: grid; grid-template-columns: 1.6em minmax(0, 1fr); gap: 1
           <span class="what">Landet Nutzertext ungefiltert im KI-Auftrag? Gibt es ein Limit pro Nutzer gegen hohe Kosten? Ist der KI-Schlüssel im Browser sichtbar? Noch nicht erkannt: Antwortlänge und Kostenobergrenze beim Anbieter.</span>
         </div>
         <div class="row">
-          <span class="mark wip">◐</span><span class="name">5 Code und Bausteine</span><span class="pill wip">teilweise</span>
-          <span class="what">Fertig ist die Suche nach gefährlichen Mustern im eigenen Code, zum Beispiel ungeprüfte Eingaben oder zusammengebaute Datenbankabfragen. Es fehlt der Abgleich der verwendeten Bausteine mit bekannten Sicherheitslücken. Dafür braucht das Gerät eine Lücken-Datenbank im Netz, die diese Umgebung nicht erreicht. Solange das fehlt, zeigt dieser Punkt nie „grün“, sondern „teilweise geprüft“.</span>
+          <span class="mark ok">✓</span><span class="name">5 Code und Bausteine</span><span class="pill ok">fertig</span>
+          <span class="what">Sucht gefährliche Muster im eigenen Code, zum Beispiel ungeprüfte Eingaben oder zusammengebaute Datenbankabfragen. Prüft außerdem, ob verwendete Bausteine bekannte Sicherheitslücken haben, wie eine Rückrufliste für Autoteile. Dazu braucht das Gerät die genauen Versionen aus der Versionsliste des Projekts. Fehlt sie, urteilt das Gerät nicht, sondern zeigt „teilweise geprüft“.</span>
         </div>
       </div>
     </div>
@@ -165,8 +165,10 @@ ul.plain li { display: grid; grid-template-columns: 1.6em minmax(0, 1fr); gap: 1
   <section>
     <h2>Was bis zum ersten Ergebnis mit Festpreis noch fehlt</h2>
     <ul class="plain">
-      <li><span class="bad">!</span><span>Abgleich mit bekannten Sicherheitslücken (Prüfpunkt 5) und die zweite Absicherung bei Geheimnissen laufen nur auf deinem Rechner oder auf dem livedock-Server, weil sie Zugriff auf Datenbanken im Netz brauchen. Vor dem ersten echten Kunden prüfen wir damit alle Testprojekte gegen. Das ist keine Einschränkung des Produkts, nur dieser Umgebung.</span></li>
-      <li><span class="wip">›</span><span>Mehr Testprojekte (geplant sind sieben, gebaut sind drei), vor allem Fälle, in denen „Umbau nötig“ oder „Stack nicht unterstützt“ gelten soll. Ohne sie wissen wir nicht, wie das Gerät bei schwierigen Projekten urteilt.</span></li>
+      <li><span class="wip">›</span><span>Die zweite Absicherung bei Geheimnissen (das Fachwerkzeug gitleaks) läuft nur auf deinem Rechner oder auf dem livedock-Server. Vor dem ersten echten Kunden vergleichen wir damit alle Testprojekte. Das ist keine Einschränkung des Produkts, nur dieser Umgebung.</span></li>
+      <li><span class="wip">›</span><span>Entscheidung vor dem ersten Kunden: Beim Abgleich der Bausteine gehen deren Namen und Versionen an den Katalog npm in den USA, nie der Code. Bei öffentlichen Bausteinen ist das unkritisch. Wir legen fest, wie wir mit firmeneigenen Bausteinen umgehen und was in die Datenschutzerklärung kommt.</span></li>
+      <li><span class="wip">›</span><span>Schwelle für den Baustein-Abgleich festlegen: Auch sauber gebaute Projekte bekommen dort Hinweise, für die es noch keine reparierte Version gibt. Das beurteilen wir am besten am Probelauf mit einem echten Projekt.</span></li>
+      <li><span class="wip">›</span><span>Mehr Testprojekte (geplant sind sieben, gebaut sind drei, dazu das Projekt 08 für den Baustein-Abgleich), vor allem Fälle, in denen „Umbau nötig“ oder „Stack nicht unterstützt“ gelten soll. Ohne sie wissen wir nicht, wie das Gerät bei schwierigen Projekten urteilt.</span></li>
       <li><span class="wip">›</span><span>Die Regeln sind vorsichtig gesetzt und erkennen bewusst nur sichere Muster. Ein erster Probelauf mit einem echten Projekt (deinem eigenen, zum Beispiel NEXUS oder das Rechnungs-Tool) zeigt, wie viele Fehlalarme in der Praxis entstehen. Dafür brauche ich von dir ein Projekt, das ich nur lesen darf.</span></li>
       <li><span class="wip">›</span><span>Das Paket und der Festpreis: Die Zuordnung von Ergebnis zu Paket ist noch nicht gebaut. Sie gehört zum Portal.</span></li>
       <li><span class="info">i</span><span>Das Kundenportal kommt danach. Dort erscheinen dieselben Ergebnisse als Kundensicht, und in deiner Steuerzentrale mit allen Details und der Freigabe, bevor etwas nach außen geht.</span></li>

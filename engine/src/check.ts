@@ -6,9 +6,11 @@ import { analyzeAiUsage } from "./scanners/aiusage.ts";
 import { scanData } from "./scanners/data.ts";
 import { scanAi } from "./scanners/ai.ts";
 import { scanCode } from "./scanners/code.ts";
+import { auditDependencies } from "./scanners/deps.ts";
+import type { Runner } from "./scanners/deps.ts";
 import type { AreaId, AreaResult, CheckResult, Finding, ResultCode } from "./types.ts";
 
-export const ENGINE_VERSION = "0.4.0";
+export const ENGINE_VERSION = "0.5.0";
 
 /** Findings below this confidence are dropped (hard rule 3). */
 export const MIN_CONFIDENCE = 0.8;
@@ -29,7 +31,7 @@ const REQUIRED_FOR_GOOD: AreaId[] = ["geheimnisse", "zugang_rechte", "daten_date
 
 export const OSV_NOTE = "Bausteine mit bekannten Sicherheitslücken sind noch nicht geprüft.";
 
-export function runCheck(dir: string): CheckResult {
+export function runCheck(dir: string, opts: { auditRunner?: Runner } = {}): CheckResult {
   const stack = detectStack(dir);
 
   let result: ResultCode | null = null;
@@ -86,15 +88,20 @@ export function runCheck(dir: string): CheckResult {
     if (stack.features.ai.length > 0 && stack.features.ai.every((p) => p === "mistral")) positives.push("KI-Dienst in der EU");
     if (ai.rateLimited) positives.push("Limit für KI-Aufrufe pro Nutzer vorhanden");
 
-    // 5 Code und Bausteine: own rules only. Without the check for known
-    // package vulnerabilities (osv-scanner) it never shows green.
+    // 5 Code und Bausteine: own pattern rules plus the check for known package
+    // vulnerabilities. Green only if that second part really ran on exact
+    // versions (lockfile); otherwise at most "teilweise geprüft".
     const code = scanCode(sources);
-    const codeF = keep(code.findings);
+    const deps = auditDependencies(dir, opts.auditRunner);
+    const codeF = keep(code.findings.concat(deps.findings));
     findings = findings.concat(codeF);
     if (code.examined) {
       const a = fromFindings(codeF);
-      setArea("code_bausteine", a === "gruen" ? "teilweise" : a, OSV_NOTE);
+      const complete = deps.status === "geprueft";
+      const note = deps.status === "geprueft" ? undefined : deps.note ?? OSV_NOTE;
+      setArea("code_bausteine", a === "gruen" && !complete ? "teilweise" : a, note);
     }
+    if (deps.status === "geprueft" && deps.findings.length === 0) positives.push("Bausteine ohne bekannte Sicherheitslücken");
     if (stack.features.validation && !code.bodyUnvalidated) positives.push("Eingaben werden geprüft");
   }
 

@@ -63,7 +63,7 @@ export interface Finding {
   /** masked hint such as "sk-…5678"; never the secret itself */
   hinweis?: string;
   /** internal evidence for Sebastian only; stripped from customer output */
-  intern?: { datei: string; zeile: number; regel: string };
+  intern?: { datei: string; zeile: number; regel: string; detail?: string };
 }
 
 export interface CheckResult {

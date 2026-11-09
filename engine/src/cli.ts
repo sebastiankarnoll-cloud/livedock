@@ -58,7 +58,7 @@ function render(r: CheckResult): string {
     for (const x of r.findings) {
       const hint = x.hinweis ? ` [${x.hinweis}]` : "";
       lines.push(`  ⎿ ${x.severity}: ${x.kategorie}, bereich ${x.bereich}${hint}`);
-      if (x.intern) lines.push(`      intern: ${x.intern.datei}:${x.intern.zeile} (${x.intern.regel})`);
+      if (x.intern) lines.push(`      intern: ${x.intern.datei}:${x.intern.zeile} (${x.intern.regel})${x.intern.detail ? ` ${x.intern.detail}` : ""}`);
     }
   }
   if (r.reviewHint) lines.push("● hinweis: viele schwere funde, bitte auf möglichen umbau prüfen");

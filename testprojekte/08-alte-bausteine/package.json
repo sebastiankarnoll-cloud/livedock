@@ -1,0 +1,10 @@
+{
+  "name": "testprojekt-08-alte-bausteine",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": { "start": "node lib/util.js" },
+  "dependencies": {
+    "lodash": "4.17.15",
+    "minimist": "1.2.0"
+  }
+}

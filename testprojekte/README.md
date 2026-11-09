@@ -11,6 +11,7 @@ Zweck: Die Engine muss auf bekannten Fällen genau die erwarteten Funde liefern,
 | 05 | `elistio` (Sebastians eigenes Projekt, nur Kopie, kein Kundencode) | realer Fall | offen, manuell bewerten |
 | 06 | `stack-fremd` | Python/Django | ⚙️ Stack nicht unterstützt |
 | 07 | `leer` | leeres Repo | ❓ Nicht prüfbar |
+| 08 | `alte-bausteine` | Zwei veraltete Bausteine mit Lockfile, sonst leer. Prüft den Lücken-Abgleich (braucht Netz: `npm run test:live` in `engine/`) | 🟡 Behebbar, Bereich 5 rot |
 
 ## Regeln für Testprojekte
 - Alle Schlüssel sind **Fälschungen** im Format echter Schlüssel (z. B. `sk-TESTONLY…`), nie echte.
