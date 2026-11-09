@@ -6,8 +6,22 @@ import type { CheckResult } from "./types.ts";
 const USAGE = "usage: livedock check <path> [--json] [--intern]";
 
 const RESULT_TEXT: Record<string, string> = {
-  stack_nicht_unterstuetzt: "Stack nicht unterstützt",
-  nicht_pruefbar: "Nicht prüfbar",
+  gut_aufgestellt: "1 Gut aufgestellt",
+  behebbar: "2 Behebbar",
+  umbau_noetig: "3 Umbau nötig",
+  akuter_fund: "4 Akuter Fund",
+  stack_nicht_unterstuetzt: "5 Stack nicht unterstützt",
+  nicht_pruefbar: "6 Nicht prüfbar",
+  ausserhalb_angebot: "7 Außerhalb des Angebots",
+  zielumgebung_passt_nicht: "8 Zielumgebung passt nicht",
+};
+
+const AMPEL_TEXT: Record<string, string> = {
+  gruen: "grün",
+  gelb: "gelb",
+  rot: "rot",
+  teilweise: "teilweise geprüft",
+  offen: "noch nicht geprüft",
 };
 
 const STATUS_TEXT: Record<string, string> = {
@@ -29,9 +43,16 @@ function render(r: CheckResult): string {
     lines.push(`  ⎿ eingabeprüfung-bibliothek: ${f.validation ? "ja" : "nein"}`);
   }
   if (r.result) lines.push(`● ergebnis: ${RESULT_TEXT[r.result]}`);
-  if (r.acute) lines.push("● akuter fund: echter zugang im code gefunden, sofort erneuern");
+  if (r.acute) {
+    lines.push("● akuter fund: echter zugang im code gefunden, sofort erneuern");
+    if (r.basis) lines.push(`  ⎿ darunter: ${RESULT_TEXT[r.basis]}`);
+  }
   lines.push("● prüfbereiche");
-  for (const a of r.areas) lines.push(`  ⎿ ${a.label}: ${a.ampel === "offen" ? "noch nicht geprüft" : a.ampel}`);
+  for (const a of r.areas) lines.push(`  ⎿ ${a.label}: ${AMPEL_TEXT[a.ampel]}${a.note ? ` (${a.note})` : ""}`);
+  if (r.positives.length) {
+    lines.push("● positives");
+    for (const p of r.positives) lines.push(`  ⎿ ${p}`);
+  }
   if (r.findings.length) {
     lines.push(`● funde (${r.findings.length})`);
     for (const x of r.findings) {
@@ -40,6 +61,7 @@ function render(r: CheckResult): string {
       if (x.intern) lines.push(`      intern: ${x.intern.datei}:${x.intern.zeile} (${x.intern.regel})`);
     }
   }
+  if (r.reviewHint) lines.push("● hinweis: viele schwere funde, bitte auf möglichen umbau prüfen");
   return lines.join("\n");
 }
 

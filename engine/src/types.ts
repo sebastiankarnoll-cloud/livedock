@@ -9,7 +9,8 @@ export type ResultCode =
   | "ausserhalb_angebot" // 7
   | "zielumgebung_passt_nicht"; // 8
 
-export type Ampel = "gruen" | "gelb" | "rot" | "offen";
+/** "teilweise" = looked at, nothing found, but part of the area cannot be checked yet (never green). */
+export type Ampel = "gruen" | "gelb" | "rot" | "teilweise" | "offen";
 
 export type AreaId =
   | "geheimnisse"
@@ -68,8 +69,14 @@ export interface Finding {
 export interface CheckResult {
   engineVersion: string;
   stack: StackInfo;
-  /** only set when the stack alone already decides (codes 5 and 6) */
+  /** overall result; acute findings give "akuter_fund" (4), see `basis` for what applies underneath */
   result: ResultCode | null;
+  /** result without the acute banner (1, 2 or 3); null if the check is not complete enough to say */
+  basis: ResultCode | null;
+  /** many severe findings: Sebastian should look at whether a rebuild (3) is needed. The engine never decides 3 alone. */
+  reviewHint: boolean;
+  /** things done well, only what the scans actually confirmed */
+  positives: string[];
   /** true if at least one finding is acute (result 4 banner) */
   acute: boolean;
   areas: AreaResult[];

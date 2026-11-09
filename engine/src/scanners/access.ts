@@ -13,6 +13,7 @@ import type { Finding } from "../types.ts";
 
 export interface AccessScan {
   findings: Finding[];
+  stats: { routes: number; authed: number; tables: number; tablesWithoutRls: number };
   /** false if there was nothing to look at (no routes, no migrations) */
   examined: boolean;
 }
@@ -33,7 +34,7 @@ function lineOf(text: string, index: number): number {
   return text.slice(0, index).split("\n").length;
 }
 
-function isRoute(rel: string, text: string): { handlerIndex: number } | null {
+export function isRoute(rel: string, text: string): { handlerIndex: number } | null {
   const p = rel.split("\\").join("/");
   const appRoute = /(^|\/)app\/(.*\/)?route\.(ts|tsx|js|jsx|mjs)$/.test(p);
   const pagesApi = /(^|\/)pages\/api\//.test(p) && SRC_EXT.test(p);
@@ -42,14 +43,14 @@ function isRoute(rel: string, text: string): { handlerIndex: number } | null {
   return m ? { handlerIndex: m.index } : null;
 }
 
-function moduleName(rel: string): string {
+export function moduleName(rel: string): string {
   const p = rel.split("\\").join("/").replace(SRC_EXT, "");
   const parts = p.split("/");
   const last = parts[parts.length - 1];
   return last === "index" ? (parts[parts.length - 2] ?? last) : last;
 }
 
-function importsModule(text: string, name: string): number {
+export function importsModule(text: string, name: string): number {
   const re = /from\s+["']([^"']+)["']|require\(\s*["']([^"']+)["']\s*\)/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(text))) {
@@ -113,11 +114,13 @@ export function scanAccess(root: string, supabase: boolean): AccessScan {
   const noAuth: Hit[] = [];
   const serviceOpen: Hit[] = [];
   let routes = 0;
+  let authed = 0;
 
   for (const s of sources) {
     const r = isRoute(s.rel, s.text);
     if (!r) continue;
     routes++;
+    if (covered || AUTH_CHECK.test(s.text)) authed++;
     if (covered || AUTH_CHECK.test(s.text) || OTHER_AUTH.test(s.text)) continue;
     const usesService = SERVICE_ROLE.test(s.text) || serviceModules.some((m) => m.rel !== s.rel && importsModule(s.text, m.name) >= 0);
     // A route without login check only matters if it touches data, directly or via the service client.
@@ -141,6 +144,7 @@ export function scanAccess(root: string, supabase: boolean): AccessScan {
 
   // RLS only exists in Supabase / Postgres projects that use it.
   let tables = 0;
+  let tablesWithoutRls = 0;
   if (supabase) {
     const missing: Hit[] = [];
     for (const s of sqlFiles) {
@@ -155,6 +159,7 @@ export function scanAccess(root: string, supabase: boolean): AccessScan {
         if (!sqlFiles.some((x) => rls.test(x.text))) missing.push({ datei: s.rel, zeile: lineOf(s.text, m.index) });
       }
     }
+    tablesWithoutRls = missing.length;
     if (missing.length) {
       findings.push(
         toFinding("table-without-rls", missing, {
@@ -184,5 +189,5 @@ export function scanAccess(root: string, supabase: boolean): AccessScan {
     );
   }
 
-  return { findings, examined: routes > 0 || tables > 0 };
+  return { findings, stats: { routes, authed, tables, tablesWithoutRls }, examined: routes > 0 || tables > 0 };
 }

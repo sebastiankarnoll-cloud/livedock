@@ -28,7 +28,7 @@ test("01-sauber: Next.js, Supabase, Mistral, Eingabeprüfung", () => {
   assert.equal(r.stack.features.supabase, true);
   assert.deepEqual(r.stack.features.ai, ["mistral"]);
   assert.equal(r.stack.features.validation, true);
-  assert.equal(r.result, null);
+  assert.equal(r.result, "gut_aufgestellt");
 });
 
 test("02-schluessel-offen: Next.js, OpenAI", () => {
@@ -77,10 +77,10 @@ test("kaputte package.json wird nicht als Node-Projekt gewertet", () => {
   assert.equal(runCheck(d).stack.status, "nicht_unterstuetzt");
 });
 
-test("Bereiche ohne Modul bleiben 'offen', nur Geheimnisse und Zugang sind geprüft", () => {
+test("01: Bereiche 1 bis 4 grün, Bereich 5 nur teilweise geprüft (nie grün ohne osv-scanner)", () => {
   const r = runCheck(join(fx, "01-sauber"));
   assert.equal(r.areas.length, 5);
-  for (const a of r.areas) assert.equal(a.ampel, a.id === "geheimnisse" || a.id === "zugang_rechte" ? "gruen" : "offen");
+  for (const a of r.areas) assert.equal(a.ampel, a.id === "code_bausteine" ? "teilweise" : "gruen", a.id);
 });
 
 test("Nicht unterstützter Stack: kein Bereich wird als geprüft ausgewiesen", () => {

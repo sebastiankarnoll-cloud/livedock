@@ -36,11 +36,16 @@ Next.js, Postgres, Claude Agent SDK, GitHub-App (nur lesen), Hetzner/Coolify-API
 ## Aktueller Schritt
 Schritt 1: Check-Engine als CLI, ohne Portal und Datenbank. Erfolg: Auf allen Testprojekten stimmen die Funde, keine Fehlalarme.
 
-Stand: Stack-Erkennung, Bereich 1 (Geheimnisse) und Bereich 2 (Zugang und Rechte) stehen (`engine/`, `npm test`, 40 Tests grün). Bereiche 3 bis 5 stehen noch auf „offen“.
-Bereich 2 nutzt eigene, vorsichtige Regeln (`scanners/access.ts`): Schnittstelle ohne Login-Prüfung, Tabelle ohne Zugriffsregeln (RLS, nur Supabase), Service-Key in offener Schnittstelle oder als NEXT_PUBLIC-Variable. Findet er nichts Prüfbares (keine Routen, keine Migrationen), bleibt der Bereich „offen“, nie grün. Nicht abgedeckt: Login nur im Browser, Rollen/Mandanten innerhalb eines Logins.
+Stand: Stack-Erkennung, Bereiche 1 bis 5 und die Ergebnis-Regel stehen (`engine/`, `npm test`, 60 Tests grün, Engine 0.4.0). Auf den Testprojekten 01 bis 03 stimmen alle Funde und das Gesamtergebnis (1, 4 mit Basis 2, 2), keine Fehlalarme.
+Alle Bereiche nutzen eigene, vorsichtige Regeln (nur sichere Funde, Konfidenz mindestens 0,8):
+- Bereich 2 (`access.ts`): Schnittstelle ohne Login-Prüfung, Tabelle ohne Zugriffsregeln (RLS, nur Supabase), Service-Key in offener Schnittstelle oder als NEXT_PUBLIC-Variable. Nichts Prüfbares gefunden = „offen“, nie grün. Nicht abgedeckt: Login nur im Browser, Rollen/Mandanten innerhalb eines Logins.
+- Bereich 3 (`data.ts`): Personenfelder (E-Mail, Telefon, Adresse, IBAN, Geburtsdatum, Vor-/Nachname) an KI-Dienst außerhalb der EU, E-Mail/Passwort im Log, Tracking ohne erkennbare Einwilligung. Nicht abgedeckt: Löschkonzept, Auftragsverarbeitung, Datenflüsse über Dritt-Bibliotheken.
+- Bereich 4 (`ai.ts`): Nutzereingabe ungeprüft im Prompt, kein Limit pro Nutzer, KI-Dienst standardmäßig außerhalb der EU (nur wenn nicht schon in Bereich 3), KI-Schlüssel als NEXT_PUBLIC-Variable. Nicht abgedeckt: Antwortlänge (maxTokens), Ausgabe-Filter, Kostenobergrenzen beim Anbieter.
+- Bereich 5 (`code.ts`): Body ungeprüft in die Datenbank, eval, Systembefehl und SQL aus zusammengesetztem Text, ungeprüftes HTML, abgeschaltete Zertifikatsprüfung. **Zeigt nie grün, sondern „teilweise geprüft“, solange osv-scanner fehlt** (`OSV_NOTE` in `check.ts`).
+Ergebnis-Regel (`check.ts`): akuter Fund = 4 (mit `basis` darunter), sonst Funde = 2, keine Funde und Bereiche 1 bis 4 grün = 1, sonst kein Urteil (`null`). **„3 Umbau nötig“ setzt die Engine nie selbst**, ab 6 schweren Funden gibt sie nur `reviewHint` für Sebastian aus. Zusätzlich liefert sie `positives` (nur, was die Scans bestätigt haben).
 Bereich 1 nutzt einen eingebauten Detektor (nur sichere Muster: Anbieter-Schlüssel, Passwörter in Datenbank-URLs, private Schlüssel, eingecheckte `.env`). gitleaks ließ sich in der Cloud-Umgebung nicht installieren (Netzwerk gesperrt); ein Adapter kann später hinter `scanSecrets()` eingehängt werden.
 Kundensicht ist Standard (keine Datei/Zeile), `--intern` zeigt Belege nur für Sebastian.
-Nächste Module: semgrep (2, 5), osv-scanner (5), Claude-Auswertung (2, 3, 4).
+Nächste Module: osv-scanner (5, auf Sebastians Rechner/Server), gitleaks-Vergleich (1), Claude-Auswertung (2, 3, 4) für Fälle, die Regeln nicht sicher entscheiden, weitere Testprojekte 04 bis 07.
 Testprojekte vor jedem Lauf mit `bash testprojekte/materialize.sh /tmp/livedock-fixtures` erzeugen.
 
 ## Offen: in der Cloud-Umgebung nicht prüfbar (nicht vergessen)

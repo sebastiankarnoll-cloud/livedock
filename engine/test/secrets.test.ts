@@ -39,7 +39,7 @@ test("02: Schlüssel, .env und DB-Passwort werden gefunden, Bereich rot, akut", 
   const r = runCheck(join(fx, "02-schluessel-offen"));
   assert.equal(r.areas.find((a) => a.id === "geheimnisse")!.ampel, "rot");
   assert.equal(r.acute, true);
-  const rules = r.findings.map((f) => f.intern?.regel).sort();
+  const rules = r.findings.filter((f) => f.area === "geheimnisse").map((f) => f.intern?.regel).sort();
   assert.deepEqual(rules, ["db-url-with-password", "env-file", "openai-key"]);
 });
 
@@ -62,7 +62,7 @@ test("01 und 03: keine Geheimnis-Funde, Bereich grün", () => {
 test("Kundensicht enthält weder Datei, Zeile noch Regel", () => {
   const v = publicView(runCheck(join(fx, "02-schluessel-offen")));
   const json = JSON.stringify(v);
-  assert.ok(v.findings.length === 3);
+  assert.ok(v.findings.filter((f) => f.area === "geheimnisse").length === 3);
   assert.doesNotMatch(json, /"datei"|"zeile"|"regel"|"intern"|ai\.ts|route\.ts/);
 });
 

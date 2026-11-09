@@ -66,7 +66,7 @@ ul.plain li { display: grid; grid-template-columns: 1.6em minmax(0, 1fr); gap: 1
 
 <main>
   <section>
-    <p class="stamp">Stand 09.11.2026 · Prüfgerät Version 0.3.0 · nur für Sebastian</p>
+    <p class="stamp">Stand 09.11.2026 · Prüfgerät Version 0.4.0 · nur für Sebastian</p>
     <h1>livedock<span class="dot">.</span> Prüfgerät</h1>
     <p class="lead">Das Prüfgerät liest ein Kundenprojekt und sagt, was daran nicht sicher ist. Diese Seite zeigt, was es heute schon kann und was noch fehlt. Wir aktualisieren sie nach jedem Schritt.</p>
   </section>
@@ -74,82 +74,101 @@ ul.plain li { display: grid; grid-template-columns: 1.6em minmax(0, 1fr); gap: 1
   <section>
     <h2>Die fünf Prüfpunkte</h2>
     <div class="panel">
-      <header><span>2 von 5 fertig</span><span>40 von 40 Selbsttests bestanden</span></header>
+      <header><span>4 von 5 fertig, 1 teilweise</span><span>60 von 60 Selbsttests bestanden</span></header>
       <div class="body">
         <div class="row">
           <span class="mark ok">✓</span><span class="name">1 Geheimnisse</span><span class="pill ok">fertig</span>
-          <span class="what">Liegen Passwörter oder KI-Schlüssel offen im Projekt? Das Gerät findet sie und zeigt nur ein maskiertes Stück, zum Beispiel sk-…5678.</span>
+          <span class="what">Liegen Passwörter oder KI-Schlüssel offen im Projekt? Das Gerät zeigt nur ein maskiertes Stück, zum Beispiel sk-…5678.</span>
         </div>
         <div class="row">
           <span class="mark ok">✓</span><span class="name">2 Zugang und Rechte</span><span class="pill ok">fertig</span>
-          <span class="what">Kann jemand ohne Anmeldung Daten abrufen? Fehlen Zugriffsregeln in der Datenbank? Wird der Universalschlüssel der Datenbank ungeschützt benutzt? Noch nicht erkannt: Anmeldung, die nur im Browser stattfindet, und Rollen innerhalb eines Logins.</span>
+          <span class="what">Kann jemand ohne Anmeldung Daten abrufen? Fehlen Zugriffsregeln in der Datenbank? Wird der Universalschlüssel der Datenbank ungeschützt benutzt? Noch nicht erkannt: Anmeldung nur im Browser, Rollen innerhalb eines Logins.</span>
         </div>
         <div class="row">
-          <span class="mark wip">›</span><span class="name">3 Daten und Datenschutz</span><span class="pill wip">als Nächstes</span>
-          <span class="what">Welche Personendaten gehen wohin, zum Beispiel an Dienste außerhalb der EU?</span>
+          <span class="mark ok">✓</span><span class="name">3 Daten und Datenschutz</span><span class="pill ok">fertig</span>
+          <span class="what">Gehen Namen oder E-Mail-Adressen an einen KI-Dienst außerhalb der EU? Stehen Passwörter in Protokollen? Läuft Tracking ohne Einwilligung? Noch nicht erkannt: Löschkonzept und Verträge mit Dienstleistern.</span>
         </div>
         <div class="row">
-          <span class="mark no">·</span><span class="name">4 KI-Anbindung</span><span class="pill no">offen</span>
-          <span class="what">Ist die KI geschützt gegen Missbrauch, hohe Kosten und fremde Eingaben?</span>
+          <span class="mark ok">✓</span><span class="name">4 KI-Anbindung</span><span class="pill ok">fertig</span>
+          <span class="what">Landet Nutzertext ungefiltert im KI-Auftrag? Gibt es ein Limit pro Nutzer gegen hohe Kosten? Ist der KI-Schlüssel im Browser sichtbar? Noch nicht erkannt: Antwortlänge und Kostenobergrenze beim Anbieter.</span>
         </div>
         <div class="row">
-          <span class="mark no">·</span><span class="name">5 Code und Bausteine</span><span class="pill bad">hier nicht möglich</span>
-          <span class="what">Gibt es bekannte Sicherheitslücken in verwendeten Bausteinen? Der Abgleich braucht eine Lücken-Datenbank, die wir in dieser Umgebung nicht erreichen. Dieser Punkt zeigt nie „grün“, solange der Abgleich fehlt.</span>
+          <span class="mark wip">◐</span><span class="name">5 Code und Bausteine</span><span class="pill wip">teilweise</span>
+          <span class="what">Fertig ist die Suche nach gefährlichen Mustern im eigenen Code, zum Beispiel ungeprüfte Eingaben oder zusammengebaute Datenbankabfragen. Es fehlt der Abgleich der verwendeten Bausteine mit bekannten Sicherheitslücken. Dafür braucht das Gerät eine Lücken-Datenbank im Netz, die diese Umgebung nicht erreicht. Solange das fehlt, zeigt dieser Punkt nie „grün“, sondern „teilweise geprüft“.</span>
         </div>
       </div>
     </div>
-    <p class="note">Was nicht geprüft ist, steht als „noch nicht geprüft“ da und nie als grün. So gibt es keine falsche Sicherheit.</p>
+    <p class="note">Was nicht geprüft ist, steht als „noch nicht geprüft“ oder „teilweise geprüft“ da und nie als grün. So gibt es keine falsche Sicherheit.</p>
+  </section>
+
+  <section>
+    <h2>Gesamtergebnis</h2>
+    <p class="note">Das Gerät leitet jetzt aus den Funden ein Gesamtergebnis ab. Ein echter Schlüssel im Code gibt immer „Akuter Fund“, darunter steht, was ohne ihn gelten würde. „Umbau nötig“ vergibt das Gerät nie selbst, weil das die teuerste Fehlentscheidung wäre. Bei sehr vielen schweren Funden bekommst du nur einen Hinweis, dass du es dir ansehen sollst.</p>
   </section>
 
   <section>
     <h2>Echte Ergebnisse auf den drei Testprojekten</h2>
-    <p class="note">Die Testprojekte sind bewusst gebaut, mit bekannten Fehlern. So sehen wir, ob das Gerät richtig urteilt. Das ist die Kundensicht: Dateinamen und Zeilen stehen nur in deiner Sicht.</p>
+    <p class="note">Die Testprojekte sind bewusst gebaut, mit bekannten Fehlern. So sehen wir, ob das Gerät richtig urteilt. Alle drei stimmen mit der Erwartung überein, ohne Fehlalarm. Das ist die Kundensicht: Dateinamen und Zeilen stehen nur in deiner Sicht.</p>
     <div class="cards">
       <article class="card">
         <h3>01 Sauber</h3>
-        <p class="expect">Erwartet: keine Funde</p>
-        <p class="verdict ok">Geheimnisse: grün · Zugang und Rechte: grün</p>
-        <ul><li class="ok">✓ 0 Funde, kein Fehlalarm</li></ul>
+        <p class="expect">Erwartet: Gut aufgestellt, keine Funde</p>
+        <p class="verdict ok">Ergebnis: 1 Gut aufgestellt</p>
+        <ul>
+          <li class="ok">✓ 0 Funde, kein Fehlalarm</li>
+          <li class="ok">✓ Anmeldung wird auf dem Server geprüft</li>
+          <li class="ok">✓ Zugriffsregeln in der Datenbank</li>
+          <li class="ok">✓ KI-Dienst in der EU, mit Limit</li>
+          <li class="ok">✓ Eingaben werden geprüft</li>
+        </ul>
       </article>
       <article class="card">
         <h3>02 Schlüssel offen</h3>
-        <p class="expect">Erwartet: 3 Funde bei Geheimnissen, akut; Zugang unauffällig</p>
-        <p class="verdict bad">Geheimnisse: rot, akuter Fund · Zugang und Rechte: grün</p>
+        <p class="expect">Erwartet: akuter Fund, darunter Behebbar</p>
+        <p class="verdict bad">Ergebnis: 4 Akuter Fund (darunter 2 Behebbar)</p>
         <ul>
           <li class="bad">Hoch: Konfigurationsdatei mit Zugangsdaten im Projekt</li>
           <li class="bad">Hoch: Datenbank-Zugang mit Passwort im Code [postgresql://…]</li>
-          <li class="bad">Hoch: KI-Schlüssel (OpenAI) im Code [sk-…5678]</li>
+          <li class="bad">Hoch: KI-Dienst-Schlüssel (OpenAI) im Code [sk-…5678]</li>
+          <li class="wip">Mittel: Kein Limit für KI-Aufrufe pro Nutzer</li>
+          <li class="wip">Niedrig: KI-Dienst standardmäßig außerhalb der EU</li>
         </ul>
       </article>
       <article class="card">
         <h3>03 Zugriff fehlt</h3>
-        <p class="expect">Erwartet: Geheimnisse sauber, bei Zugang 3 Funde</p>
-        <p class="verdict bad">Geheimnisse: grün · Zugang und Rechte: rot</p>
+        <p class="expect">Erwartet: Behebbar, kein Umbau</p>
+        <p class="verdict wip">Ergebnis: 2 Behebbar</p>
         <ul>
           <li class="bad">Hoch: Schnittstelle ohne Anmeldeprüfung</li>
           <li class="bad">Hoch: Datenbank-Tabelle ohne Zugriffsregeln</li>
           <li class="bad">Hoch: Universalschlüssel der Datenbank ungeschützt eingesetzt</li>
+          <li class="bad">Hoch: Personendaten gehen an einen KI-Dienst außerhalb der EU</li>
+          <li class="wip">Mittel: Nutzereingabe ungefiltert im KI-Auftrag</li>
+          <li class="wip">Mittel: Kein Limit für KI-Aufrufe pro Nutzer</li>
+          <li class="wip">Mittel: Eingaben werden nicht geprüft</li>
         </ul>
       </article>
     </div>
-    <div class="term"><pre>$ livedock check testprojekte/02-schluessel-offen
-● stack: nextjs (unterstützt), 7 dateien
-● akuter fund: echter zugang im code gefunden, sofort erneuern
+    <p class="note">Beim zweiten Testprojekt habe ich die Erwartung angepasst: Beim KI-Punkt standen „ein Fund“, gemeint waren aber zwei getrennte Aussagen, Limit und EU. Beide sind jetzt einzeln aufgeführt.</p>
+    <div class="term"><pre>$ livedock check testprojekte/03-zugriff-fehlt
+● ergebnis: 2 Behebbar
 ● prüfbereiche
-  ⎿ Geheimnisse: rot
-  ⎿ Zugang und Rechte: noch nicht geprüft
-  ⎿ Daten und Datenschutz: noch nicht geprüft
-  ⎿ KI-Anbindung: noch nicht geprüft
-  ⎿ Code und Bausteine: noch nicht geprüft
-● funde (3)</pre></div>
+  ⎿ Geheimnisse: grün
+  ⎿ Zugang und Rechte: rot
+  ⎿ Daten und Datenschutz: rot
+  ⎿ KI-Anbindung: gelb
+  ⎿ Code und Bausteine: gelb (Bausteine mit bekannten
+    Sicherheitslücken sind noch nicht geprüft.)
+● funde (7)</pre></div>
   </section>
 
   <section>
     <h2>Was bis zum ersten Ergebnis mit Festpreis noch fehlt</h2>
     <ul class="plain">
-      <li><span class="wip">›</span><span>Prüfpunkte 3 und 4 bauen. Danach gibt es für jedes Testprojekt ein vollständiges Urteil.</span></li>
-      <li><span class="wip">›</span><span>Die Regel, die aus den Funden ein Ergebnis macht: gut aufgestellt, behebbar oder Umbau nötig. Sie bestimmt später das Paket und den Preis.</span></li>
-      <li><span class="bad">!</span><span>Prüfpunkt 5 und die zweite Absicherung bei Geheimnissen laufen nur auf deinem Rechner oder auf dem livedock-Server, weil sie Zugriff auf Datenbanken im Netz brauchen. Das ist keine Einschränkung des Produkts, nur dieser Umgebung. Vor dem ersten echten Kunden prüfen wir damit alle Testprojekte gegen.</span></li>
+      <li><span class="bad">!</span><span>Abgleich mit bekannten Sicherheitslücken (Prüfpunkt 5) und die zweite Absicherung bei Geheimnissen laufen nur auf deinem Rechner oder auf dem livedock-Server, weil sie Zugriff auf Datenbanken im Netz brauchen. Vor dem ersten echten Kunden prüfen wir damit alle Testprojekte gegen. Das ist keine Einschränkung des Produkts, nur dieser Umgebung.</span></li>
+      <li><span class="wip">›</span><span>Mehr Testprojekte (geplant sind sieben, gebaut sind drei), vor allem Fälle, in denen „Umbau nötig“ oder „Stack nicht unterstützt“ gelten soll. Ohne sie wissen wir nicht, wie das Gerät bei schwierigen Projekten urteilt.</span></li>
+      <li><span class="wip">›</span><span>Die Regeln sind vorsichtig gesetzt und erkennen bewusst nur sichere Muster. Ein erster Probelauf mit einem echten Projekt (deinem eigenen, zum Beispiel NEXUS oder das Rechnungs-Tool) zeigt, wie viele Fehlalarme in der Praxis entstehen. Dafür brauche ich von dir ein Projekt, das ich nur lesen darf.</span></li>
+      <li><span class="wip">›</span><span>Das Paket und der Festpreis: Die Zuordnung von Ergebnis zu Paket ist noch nicht gebaut. Sie gehört zum Portal.</span></li>
       <li><span class="info">i</span><span>Das Kundenportal kommt danach. Dort erscheinen dieselben Ergebnisse als Kundensicht, und in deiner Steuerzentrale mit allen Details und der Freigabe, bevor etwas nach außen geht.</span></li>
     </ul>
   </section>
