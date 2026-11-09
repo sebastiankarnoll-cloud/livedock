@@ -1,0 +1,12 @@
+{
+  "name": "livedock-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": { "livedock": "./bin/livedock.js" },
+  "engines": { "node": ">=22.18" },
+  "scripts": {
+    "check": "node src/cli.ts check",
+    "test": "node --test \"test/*.test.ts\""
+  }
+}
