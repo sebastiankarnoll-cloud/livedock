@@ -55,6 +55,7 @@ Dazu kommt Hetzner direkt an Hetzner, ca. 5–20 €/Monat.
 **Grundsätze**
 
 - **Sicherheit ist nie eine Zusatzoption.** Sicherheitskorrekturen, Server, Backups, EU-KI und Datenschutz-Unterlagen stecken im Paket und sind nie einzeln buchbar.
+- **Ein kostenloser Check pro Projekt und E-Mail-Adresse** (Entscheidung Sebastian, 09.11.2026). Weitere Checks für dasselbe Projekt sind Teil des Pakets. Zweck: Der Check soll nicht als Anleitung zum Selbstreparieren dienen. Ergebnis zeigt nur Kategorie, Auswirkung und groben Bereich, keine Fundorte und keine Lösung.
 - **Festpreis von Anfang an.** Der Kunde sieht ihn nach dem Schnellcheck, bevor er bucht.
 - **Ausstiegsklausel:** Ergibt die vollständige Prüfung etwas grundlegend anderes als der Schnellcheck, kann der Kunde kostenlos zurücktreten.
 - **Passt ein Tool nicht ins Paket** (grundlegender Umbau, kein Login/Rollen bei sensiblen Daten, Zielumgebung), gibt es ein eigenes Angebot bzw. den Check ohne Paket.
