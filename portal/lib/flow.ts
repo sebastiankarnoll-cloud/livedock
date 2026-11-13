@@ -2,13 +2,14 @@ import type pg from "pg";
 import { withUser } from "./db.ts";
 import { ensureCase } from "./cases.ts";
 
-export type Stage = "verbinden" | "fragen" | "laeuft" | "wartet";
+export type Stage = "verbinden" | "fragen" | "laeuft" | "wartet" | "ergebnis";
 
 export const STAGE_PATH: Record<Stage, string> = {
   verbinden: "/verbinden",
   fragen: "/fragen",
   laeuft: "/laeuft",
   wartet: "/wartet",
+  ergebnis: "/ergebnis",
 };
 
 /** Where the customer is on the way, derived from what exists. Each screen sends people to their own stage. */
@@ -17,10 +18,12 @@ export async function stageOf(pool: pg.Pool, userId: string): Promise<{ stage: S
   const r = await withUser(pool, userId, async (q) => {
     const p = await q.query("select 1 from projects limit 1");
     const j = await q.query("select status from jobs limit 1");
-    return { project: p.rowCount! > 0, job: (j.rows[0]?.status ?? null) as string | null };
+    const o = await q.query("select 1 from check_results_public limit 1");
+    return { project: p.rowCount! > 0, job: (j.rows[0]?.status ?? null) as string | null, released: o.rowCount! > 0 };
   });
   let stage: Stage = "verbinden";
-  if (r.job === "queued" || r.job === "running") stage = "laeuft";
+  if (r.released) stage = "ergebnis";
+  else if (r.job === "queued" || r.job === "running") stage = "laeuft";
   else if (r.job === "done" || r.job === "failed") stage = "wartet";
   else if (r.project) stage = "fragen";
   return { stage, caseId: c.id, deleteAfter: new Date(c.delete_after), failed: r.job === "failed" };

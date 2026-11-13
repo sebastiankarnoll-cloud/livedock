@@ -13,6 +13,17 @@ export function getPool(): pg.Pool {
   return pool;
 }
 
+/** Control center pool (role livedock_staff). Missing URL = control center switched off. */
+let staffPool: pg.Pool | null = null;
+export function getStaffPool(): pg.Pool {
+  if (!staffPool) {
+    const url = process.env.DATABASE_STAFF_URL;
+    if (!url) throw new Error("DATABASE_STAFF_URL missing");
+    staffPool = new pg.Pool({ connectionString: url, max: 3 });
+  }
+  return staffPool;
+}
+
 export function makePool(url: string): pg.Pool {
   return new pg.Pool({ connectionString: url, max: 5 });
 }

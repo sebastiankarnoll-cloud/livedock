@@ -1,6 +1,6 @@
 # Technik und Datenschutz: was tatsächlich gebaut ist
 
-Interne Arbeitsdatei. Hier steht nur, was im Code umgesetzt und mit Tests belegt ist (Stand 09.11.2026). Grundlage für später: TOMs, Verarbeitungsverzeichnis, Infoblatt für die IT des Kunden, Datenschutzerklärung, Löschprotokoll. Nichts hier ist eine Rechtsberatung. Wird bei jedem Bauschritt ergänzt.
+Interne Arbeitsdatei. Hier steht nur, was im Code umgesetzt und mit Tests belegt ist (Stand 14.11.2026). Grundlage für später: TOMs, Verarbeitungsverzeichnis, Infoblatt für die IT des Kunden, Datenschutzerklärung, Löschprotokoll. Nichts hier ist eine Rechtsberatung. Wird bei jedem Bauschritt ergänzt.
 
 Legende: ✅ gebaut und getestet · ◻ geplant, noch nicht gebaut
 
@@ -13,6 +13,7 @@ Legende: ✅ gebaut und getestet · ◻ geplant, noch nicht gebaut
 | Hochgeladener Projektcode (ZIP, entpackt) | Check | Dateiablage je Fall | automatisch nach 30 Tagen, mit Protokoll |
 | Antworten auf die Fragen vor dem Check (Zweck, Nutzer, Aufgabe, Zielumgebung, freiwillig) | Einordnung | Postgres (`case_answers`), je Kunde getrennt | ◻ mit dem Fall (noch nicht automatisch) |
 | Check-Ergebnis mit Belegen (Datei, Zeile) | Prüfung durch Sebastian | Postgres (`check_results_internal`) | ◻ Aufbewahrungsfrist offen |
+| Freigegebenes Ergebnis (Kundensicht) und Freigabe-Protokoll | Anzeige für den Kunden, Nachweis | Postgres (`check_results_public`, `review_log`) | ◻ Aufbewahrungsfrist offen |
 
 Keine Nutzerdaten des Kunden, nur Code. Echte Schlüssel im Code werden nie im Klartext gespeichert oder angezeigt (maskiert).
 
@@ -23,7 +24,8 @@ Keine Nutzerdaten des Kunden, nur Code. Echte Schlüssel im Code werden nie im K
 - ✅ Anmelde-Links und Sitzungs-Token liegen nur als SHA-256-Hash in der Datenbank.
 - ✅ Sitzungs-Cookie: httpOnly, SameSite Lax, in Produktion Secure. Laufzeit 14 Tage, Abmeldung beendet die Sitzung sofort.
 - ✅ Höchstens 5 Anmelde-Links je Adresse in 15 Minuten. Die Antwort verrät nicht, ob es ein Konto gibt.
-- ◻ Zugang für Sebastian (Steuerzentrale) mit eigener Rolle und stärkerer Anmeldung.
+- ✅ Zugang für Sebastian (Steuerzentrale): nur Adressen aus der Server-Einstellung `STAFF_EMAILS`, Anmeldung höchstens 8 Stunden alt, für alle anderen „nicht gefunden“. Eigene Datenbankrolle `livedock_staff`.
+- ◻ Zweiter Faktor für die Steuerzentrale und eigene Instanz hinter eigener Adresse.
 
 **Kundentrennung (harte Regel 6)**
 - ✅ Row Level Security in Postgres für alle Kundendaten (Fälle, Projekte, Antworten, Aufträge). Die App-Rolle ist kein Superuser und kann die Sicherheit nicht umgehen. Auch eine Abfrage auf fremde Zeilen liefert nichts, Schreiben auf fremde Zeilen scheitert.
@@ -53,7 +55,9 @@ Keine Nutzerdaten des Kunden, nur Code. Echte Schlüssel im Code werden nie im K
 - ✅ Das vollständige Ergebnis liegt in einer Tabelle ohne Zugriff für die Kunden-App (per Test belegt). Der Kunde sieht nur den Fortschritt (welche Schritte fertig sind), nichts zum Ergebnis, bis Sebastian freigibt.
 - ✅ Ein kostenloser Check je Fall (Datenbank-Regel), ein Fall je Kunde.
 - ✅ Fehlermeldungen und Protokolle enthalten keinen Kundeninhalt.
-- ◻ Freigabe-Warteschlange und Sofortmeldung bei akutem Fund (Steuerzentrale).
+- ✅ Freigabe-Warteschlange: Der Kunde bekommt sein Ergebnis erst nach Freigabe. Freigegeben wird nur die Kundensicht (ohne Datei, Zeile, Prüfhinweis). Jede Freigabe, Zurückhaltung und Mail steht im Protokoll (wer, wann, Ergebnis-Code), ohne Kundeninhalt.
+- ✅ Sofortmeldung bei akutem Fund: Mail mit Priorität an Sebastian, ohne Einzelheiten und ohne Schlüssel. Der Kunde sieht bis zur Freigabe nichts.
+- ◻ Sofortmeldung aufs Handy per Push (derzeit nur per Mail).
 
 ## 3. Orte der Verarbeitung
 
@@ -61,7 +65,7 @@ Keine Nutzerdaten des Kunden, nur Code. Echte Schlüssel im Code werden nie im K
 - ✅ Entscheidung 09.11.2026: KI-Analyse nur in der EU, keine Abfragen in die USA. Die Bereiche 1 bis 5 der Engine laufen ohne KI.
 - ◻ Lücken-Abgleich in Produktion über lokale Kopie der Datenbank auf dem EU-Server (nur in der Entwicklung per npm-Registry, USA).
 - ◻ Auswahl der EU-KI-Einrichtung (Recherche liegt vor, Prüfung offen).
-- ◻ Mail-Versand per SMTP über info@livedock.de. Anbieter und Auftragsverarbeitungsvertrag klären (All-inkl, Deutschland).
+- ◻ Mail-Versand per SMTP über info@livedock.de bei All-inkl (Deutschland), Server w013d057.kasserver.com, Port 465 mit SSL, Zugangsdaten nur in den Server-Einstellungen. Eingebaut und getestet, noch nicht mit dem echten Postfach erprobt. Auftragsverarbeitungsvertrag klären, SPF/DKIM/DMARC einrichten.
 
 ## 4. Unterauftragsverarbeiter (geplant)
 

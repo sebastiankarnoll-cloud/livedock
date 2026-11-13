@@ -2,7 +2,7 @@ import type pg from "pg";
 import nodemailer from "nodemailer";
 
 export interface Mailer {
-  send(to: string, subject: string, body: string): Promise<void>;
+  send(to: string, subject: string, body: string, opts?: { priority?: "high" }): Promise<void>;
 }
 
 /** Development mailer: stores mails in the outbox table. Nothing leaves the machine. */
@@ -35,8 +35,8 @@ export function smtpMailer(cfg: SmtpConfig): Mailer {
     auth: { user: cfg.user, pass: cfg.pass },
   });
   return {
-    async send(to, subject, body) {
-      await transport.sendMail({ from: cfg.from, to, subject, text: body });
+    async send(to, subject, body, opts) {
+      await transport.sendMail({ from: cfg.from, to, subject, text: body, ...(opts?.priority ? { priority: opts.priority } : {}) });
     },
   };
 }

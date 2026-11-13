@@ -10,7 +10,7 @@
     "migrate": "node scripts/migrate.ts",
     "purge": "node scripts/purge.ts",
     "worker": "node scripts/worker.ts",
-    "test:e2e": "node test/e2e/login.e2e.cjs",
+    "test:e2e": "node test/e2e/login.e2e.cjs && node --env-file=.env test/e2e/staff.e2e.cjs",
     "test": "node --env-file=.env --test --test-concurrency=1 \"test/*.test.ts\""
   },
   "dependencies": {

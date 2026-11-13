@@ -93,11 +93,11 @@ export async function consumeLoginToken(
 export async function getSessionUser(pool: pg.Pool, sessionToken: string | undefined) {
   if (!sessionToken) return null;
   const r = await pool.query(
-    `select u.id, u.email from sessions s join users u on u.id = s.user_id
+    `select u.id, u.email, s.created_at as session_at from sessions s join users u on u.id = s.user_id
      where s.token_hash = $1 and s.expires_at > now()`,
     [hashToken(sessionToken)],
   );
-  return r.rowCount ? (r.rows[0] as { id: string; email: string }) : null;
+  return r.rowCount ? (r.rows[0] as { id: string; email: string; session_at: Date }) : null;
 }
 
 export async function endSession(pool: pg.Pool, sessionToken: string | undefined) {

@@ -9,6 +9,7 @@ const need = (k: string) => {
 export const APP_URL = need("TEST_DATABASE_URL");
 export const ADMIN_URL = need("TEST_DATABASE_ADMIN_URL");
 export const WORKER_URL = need("TEST_DATABASE_WORKER_URL");
+export const STAFF_URL = need("TEST_DATABASE_STAFF_URL");
 
 export function pools(): { app: pg.Pool; admin: pg.Pool } {
   return { app: makePool(APP_URL), admin: makePool(ADMIN_URL) };
