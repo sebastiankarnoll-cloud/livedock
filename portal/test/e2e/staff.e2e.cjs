@@ -59,8 +59,23 @@ async function login(page, email) {
 
   // Customer now lands on the result page and the mail has only a link.
   await kp.goto(base + "/verbinden");
-  await kp.waitForURL("**/ergebnis");
-  await kp.getByRole("heading", { name: "Behebbar" }).waitFor();
+  await kp.waitForURL("**/ergebnis/akut");
+  await kp.getByRole("heading", { name: "Bitte erneuere jetzt diese Zugänge." }).waitFor();
+  await kp.getByText("sk-…ab12").waitFor();
+  assert.ok(!(await kp.content()).includes("geheim.ts"), "keine Datei im Kundenbild");
+  await kp.goto(base + "/ergebnis"); // not before the confirmation
+  await kp.waitForURL("**/ergebnis/akut");
+  await kp.click("text=Erledigt, weiter zum Ergebnis");
+  await kp.getByText("Bitte bestätige zuerst").waitFor();
+  await kp.check("#done");
+  await kp.click("text=Erledigt, weiter zum Ergebnis");
+  await kp.waitForURL(/\/ergebnis$/);
+  await kp.getByRole("heading", { name: "Dein Tool lässt sich sicher live bringen." }).waitFor();
+  await kp.getByText("Ergebnis: Behebbar").waitFor();
+  await kp.click("text=Die Punkte ansehen");
+  await kp.getByRole("heading", { name: /wichtigsten Punkte/ }).waitFor();
+  await kp.getByText("Schlüssel im Code").waitFor();
+  assert.ok(!(await kp.content()).includes("geheim.ts"));
   const mail = (await db.query("select body from outbox where to_email = $1 and subject = 'Dein Ergebnis ist da'", [cust])).rows;
   assert.equal(mail.length, 1);
   assert.ok(mail[0].body.includes("/ergebnis") && !/geheim|sk-/.test(mail[0].body));

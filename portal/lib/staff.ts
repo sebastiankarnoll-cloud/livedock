@@ -72,7 +72,7 @@ export interface Review {
   engineVersion: string | null;
   result: CheckResult | null;
   answers: { skipped: boolean; purpose: string | null; audience: string | null; task: string | null; target: string | null } | null;
-  release: { at: Date; by: string; mailSentAt: Date | null; finalCode: string } | null;
+  release: { at: Date; by: string; mailSentAt: Date | null; finalCode: string; acuteAckAt: Date | null } | null;
   log: { action: string; actor: string; detail: string | null; at: Date }[];
 }
 
@@ -90,7 +90,7 @@ export async function getReview(staff: pg.Pool, jobId: string): Promise<Review |
   const x = j.rows[0];
   const [a, p, l] = await Promise.all([
     staff.query("select skipped, purpose, audience, task, target from case_answers where case_id = $1", [x.case_id]),
-    staff.query("select released_at, released_by, mail_sent_at, result_code from check_results_public where job_id = $1", [jobId]),
+    staff.query("select released_at, released_by, mail_sent_at, result_code, acute_ack_at from check_results_public where job_id = $1", [jobId]),
     staff.query("select action, actor, detail, created_at from review_log where job_id = $1 order by created_at", [jobId]),
   ]);
   const result = (x.result_json ?? null) as CheckResult | null;
@@ -110,7 +110,7 @@ export async function getReview(staff: pg.Pool, jobId: string): Promise<Review |
     engineVersion: x.engine_version,
     result,
     answers: a.rowCount ? a.rows[0] : null,
-    release: p.rowCount ? { at: p.rows[0].released_at, by: p.rows[0].released_by, mailSentAt: p.rows[0].mail_sent_at, finalCode: p.rows[0].result_code } : null,
+    release: p.rowCount ? { at: p.rows[0].released_at, by: p.rows[0].released_by, mailSentAt: p.rows[0].mail_sent_at, finalCode: p.rows[0].result_code, acuteAckAt: p.rows[0].acute_ack_at } : null,
     log: l.rows.map((r) => ({ action: r.action, actor: r.actor, detail: r.detail, at: r.created_at })),
   };
 }

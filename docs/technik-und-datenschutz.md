@@ -56,6 +56,7 @@ Keine Nutzerdaten des Kunden, nur Code. Echte Schlüssel im Code werden nie im K
 - ✅ Ein kostenloser Check je Fall (Datenbank-Regel), ein Fall je Kunde.
 - ✅ Fehlermeldungen und Protokolle enthalten keinen Kundeninhalt.
 - ✅ Freigabe-Warteschlange: Der Kunde bekommt sein Ergebnis erst nach Freigabe. Freigegeben wird nur die Kundensicht (ohne Datei, Zeile, Prüfhinweis). Jede Freigabe, Zurückhaltung und Mail steht im Protokoll (wer, wann, Ergebnis-Code), ohne Kundeninhalt.
+- ✅ Ergebnisseite des Kunden liest nur die freigegebene Kundensicht. Die Kunden-App darf daran nur die Bestätigung „Zugänge erneuert“ setzen, nichts sonst (per Test belegt). Bei akutem Fund steht die Bestätigung im Protokoll der Steuerzentrale.
 - ✅ Sofortmeldung bei akutem Fund: Mail mit Priorität an Sebastian, ohne Einzelheiten und ohne Schlüssel. Der Kunde sieht bis zur Freigabe nichts.
 - ◻ Sofortmeldung aufs Handy per Push (derzeit nur per Mail).
 

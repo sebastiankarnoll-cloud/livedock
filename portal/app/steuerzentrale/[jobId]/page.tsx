@@ -58,7 +58,8 @@ export default async function Fall({ params, searchParams }: { params: Promise<{
             <div className="stack">
               <div className="box">
                 Freigegeben am {fmt(r.release.at)} von {r.release.by}. Ergebnis für den Kunden: <b>{resultLabel(r.release.finalCode)}</b>.{" "}
-                {r.release.mailSentAt ? `Mail gesendet am ${fmt(r.release.mailSentAt)}.` : "Die Mail ist noch nicht raus."}
+                {r.release.mailSentAt ? `Mail gesendet am ${fmt(r.release.mailSentAt)}.` : "Die Mail ist noch nicht raus."}{" "}
+                {r.item.acute && (r.release.acuteAckAt ? `Kunde hat die Erneuerung der Zugänge am ${fmt(r.release.acuteAckAt)} bestätigt.` : "Kunde hat die Erneuerung der Zugänge noch nicht bestätigt.")}
               </div>
               {!r.release.mailSentAt && (
                 <form action={resendMail}>
