@@ -3,7 +3,8 @@
 # and writes .env with freshly generated passwords (no default passwords, nothing in git).
 set -euo pipefail
 cd "$(dirname "$0")/.."
-SU="su postgres -c"
+# Linux (root): act as the postgres user. macOS (Homebrew): your own user is the database superuser.
+SU() { if [ "$(id -u)" = 0 ] && id postgres >/dev/null 2>&1; then su postgres -c "$1"; else bash -c "$1"; fi; }
 H="localhost:5432"
 
 if [ ! -f .env ] || ! grep -q '^DATABASE_URL=' .env; then
@@ -36,7 +37,7 @@ fi
 pw() { local v; v=$(grep "^$1=" .env | head -1 | cut -d= -f2-); v=${v#*://}; v=${v#*:}; echo "${v%%@*}"; }
 OWNER_PW=$(pw DATABASE_ADMIN_URL); APP_PW=$(pw DATABASE_URL); WORKER_PW=$(pw DATABASE_WORKER_URL); STAFF_PW=$(pw DATABASE_STAFF_URL)
 
-$SU "psql -v ON_ERROR_STOP=1 -q" <<SQL
+SU "psql -v ON_ERROR_STOP=1 -q" <<SQL
 do \$\$ begin
   if not exists (select from pg_roles where rolname = 'livedock_owner') then create role livedock_owner login createdb; end if;
   if not exists (select from pg_roles where rolname = 'livedock_worker') then create role livedock_worker login nosuperuser bypassrls; end if;
@@ -49,9 +50,9 @@ alter role livedock_worker password '${WORKER_PW}';
 alter role livedock_staff password '${STAFF_PW}';
 SQL
 for db in livedock_dev livedock_test; do
-  $SU "psql -tAc \"select 1 from pg_database where datname='$db'\"" | grep -q 1 || \
-    $SU "psql -c \"create database $db owner livedock_owner\""
-  $SU "psql -d $db -q -c 'create extension if not exists citext; create extension if not exists pgcrypto;'" 2>/dev/null
+  SU "psql -tAc \"select 1 from pg_database where datname='$db'\"" | grep -q 1 || \
+    SU "psql -c \"create database $db owner livedock_owner\""
+  SU "psql -d $db -q -c 'create extension if not exists citext; create extension if not exists pgcrypto;'" 2>/dev/null
   key=DATABASE_ADMIN_URL; [ "$db" = livedock_test ] && key=TEST_DATABASE_ADMIN_URL
   DATABASE_ADMIN_URL=$(grep "^$key=" .env | cut -d= -f2-) node scripts/migrate.ts
 done
