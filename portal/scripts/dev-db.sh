@@ -37,7 +37,7 @@ fi
 pw() { local v; v=$(grep "^$1=" .env | head -1 | cut -d= -f2-); v=${v#*://}; v=${v#*:}; echo "${v%%@*}"; }
 OWNER_PW=$(pw DATABASE_ADMIN_URL); APP_PW=$(pw DATABASE_URL); WORKER_PW=$(pw DATABASE_WORKER_URL); STAFF_PW=$(pw DATABASE_STAFF_URL)
 
-SU "psql -v ON_ERROR_STOP=1 -q" <<SQL
+SU "psql -d postgres -v ON_ERROR_STOP=1 -q" <<SQL
 do \$\$ begin
   if not exists (select from pg_roles where rolname = 'livedock_owner') then create role livedock_owner login createdb; end if;
   if not exists (select from pg_roles where rolname = 'livedock_worker') then create role livedock_worker login nosuperuser bypassrls; end if;
@@ -50,8 +50,8 @@ alter role livedock_worker password '${WORKER_PW}';
 alter role livedock_staff password '${STAFF_PW}';
 SQL
 for db in livedock_dev livedock_test; do
-  SU "psql -tAc \"select 1 from pg_database where datname='$db'\"" | grep -q 1 || \
-    SU "psql -c \"create database $db owner livedock_owner\""
+  SU "psql -d postgres -tAc \"select 1 from pg_database where datname='$db'\"" | grep -q 1 || \
+    SU "psql -d postgres -c \"create database $db owner livedock_owner\""
   SU "psql -d $db -q -c 'create extension if not exists citext; create extension if not exists pgcrypto;'" 2>/dev/null
   key=DATABASE_ADMIN_URL; [ "$db" = livedock_test ] && key=TEST_DATABASE_ADMIN_URL
   DATABASE_ADMIN_URL=$(grep "^$key=" .env | cut -d= -f2-) node scripts/migrate.ts
