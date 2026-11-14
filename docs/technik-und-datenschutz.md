@@ -66,7 +66,7 @@ Keine Nutzerdaten des Kunden, nur Code. Echte Schlüssel im Code werden nie im K
 - ✅ Entscheidung 09.11.2026: KI-Analyse nur in der EU, keine Abfragen in die USA. Die Bereiche 1 bis 5 der Engine laufen ohne KI.
 - ◻ Lücken-Abgleich in Produktion über lokale Kopie der Datenbank auf dem EU-Server (nur in der Entwicklung per npm-Registry, USA).
 - ◻ Auswahl der EU-KI-Einrichtung (Recherche liegt vor, Prüfung offen).
-- ◻ Mail-Versand per SMTP über info@livedock.de bei All-inkl (Deutschland), Server w013d057.kasserver.com, Port 465 mit SSL, Zugangsdaten nur in den Server-Einstellungen. Eingebaut und getestet, noch nicht mit dem echten Postfach erprobt. Auftragsverarbeitungsvertrag klären, SPF/DKIM/DMARC einrichten.
+- ◻ Mail-Versand per SMTP über info@livedock.de bei All-inkl (Deutschland), Server w013d057.kasserver.com, Port 465 mit SSL, Zugangsdaten nur in den Server-Einstellungen. Eingebaut und am 14.11.2026 mit dem echten Postfach erprobt (Testmail im Posteingang). SPF, DKIM und DMARC sind eingetragen, die PASS-Werte im Mail-Original sind noch zu prüfen. Auftragsverarbeitungsvertrag klären.
 
 ## 4. Unterauftragsverarbeiter (geplant)
 
