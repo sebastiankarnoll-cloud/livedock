@@ -4,8 +4,8 @@ import Link from "next/link";
 import { listQueue, shortId, type QueueItem } from "../../lib/staff.ts";
 import { resultLabel } from "../../lib/results.ts";
 
-const sub = (i: QueueItem) => (i.status === "failed" ? "Check fehlgeschlagen" : i.acute ? "Akut: bitte zuerst prüfen" : i.held ? `${resultLabel(i.resultCode)} · zurückgehalten` : resultLabel(i.resultCode));
-const tone = (i: QueueItem) => (i.acute || i.status === "failed" ? "bad" : i.held ? "hold" : "");
+const sub = (i: QueueItem) => (i.released ? `${resultLabel(i.resultCode)} · freigegeben` : i.status === "failed" ? "Check fehlgeschlagen" : i.acute ? "Akut: bitte zuerst prüfen" : i.held ? `${resultLabel(i.resultCode)} · zurückgehalten` : resultLabel(i.resultCode));
+const tone = (i: QueueItem) => (i.released ? "" : i.acute || i.status === "failed" ? "bad" : i.held ? "hold" : "");
 
 /** Frame of the control center: header with counts, queue on the left, one case on the right. */
 export default async function Frame(props: { staff: pg.Pool; active?: string; children: ReactNode }) {
